@@ -1,0 +1,98 @@
+# Module Generation
+
+This document explains how modulefiles and pkg-config metadata are generated
+for AFAR drops, and how to add or refresh versions safely.
+
+## Generator Script
+Script: `afar_modules/scripts/generate_afar_modules.sh`
+
+The generator is the single source of truth for:
+- `modulefiles/` (Lmod modulefiles)
+- `pkgconfig/` (rocm-afar and mpichf90 pc files)
+- Config defaults (`config/afar-root.lua`, `config/cray-mpich-dir.txt`)
+
+Do not edit generated modulefiles by hand. Update the generator or config
+inputs, then re-run the script.
+
+## Inputs
+Configuration files:
+- `config/afar-root.lua`: default AFAR install root used by modulefiles.
+- `config/afar-versions.txt`: mapping of module versions to AFAR drop dirs.
+- `config/cray-mpich-dir.txt`: Cray MPICH root used to populate mpichf90.pc.
+
+Environment variables and flags:
+- `AFAR_ROOT`: overrides `config/afar-root.lua`.
+- `AFAR_META_MODULE_DIR`: overrides the meta module directory name
+  (default: `afar-prgenv`).
+- `CRAY_MPICH_DIR` or `MPICH_DIR`: override the Cray MPICH root at generation
+  time.
+
+CLI flags:
+- `--root <path>`: set AFAR root and update `config/afar-root.lua`.
+- `--output <dir>`: set modulefiles output dir.
+- `--pkgconfig-dir <dir>`: set pkg-config output dir.
+- `--cray-mpich-dir <dir>`: set Cray MPICH root and update config file.
+- `--versions <file>`: use a custom versions file.
+- `--scan`: scan `AFAR_ROOT` for drops.
+- `--write-versions`: write scanned drops to `config/afar-versions.txt`.
+
+## Versions File Format
+`config/afar-versions.txt` uses this format:
+```
+# module-version|rocm-afar-dir
+22.2.0-8873|rocm-afar-8873-drop-22.2.0
+```
+Comments (`#`) and whitespace are ignored. The first field is the module
+version shown to users, the second is the AFAR drop directory name under
+`AFAR_ROOT`.
+
+## Output Layout
+Modulefiles:
+- `modulefiles/afar-prgenv/<ver>.lua`
+- `modulefiles/afar-amd/<ver>.lua`
+- `modulefiles/afar-rocm/<ver>.lua`
+
+Pkg-config:
+- `pkgconfig/rocm-afar-<ver>.pc`
+- `pkgconfig/<ver>/rocm-afar-<ver>.pc`
+- `pkgconfig/<ver>/mpich3.4a2/mpichf90.pc`
+- `pkgconfig/<ver>/mpich4.3.1/mpichf90.pc`
+
+The per-flavor `mpichf90.pc` files are used to select the correct MPI module
+files for Cray MPICH 8.x vs 9.x.
+
+## Adding a New AFAR Drop
+1) Install the AFAR drop under `AFAR_ROOT`.
+2) Update the versions file:
+   - Auto-scan:
+     `afar_modules/scripts/generate_afar_modules.sh --scan --write-versions`
+   - Or edit `config/afar-versions.txt` manually.
+3) Update the Cray MPICH dir if needed:
+   `afar_modules/scripts/generate_afar_modules.sh --cray-mpich-dir /opt/cray/pe/mpich/9.0.1/ofi/amd/6.0`
+4) Regenerate:
+   `afar_modules/scripts/generate_afar_modules.sh`
+5) Validate:
+   ```
+   module use /path/to/afar_modules/modulefiles
+   module load PrgEnv-amd
+   module load afar-prgenv/<ver>
+   module avail afar-prgenv
+   pkg-config --modversion rocm-afar-<ver>
+   pkg-config --cflags mpichf90
+   ```
+
+## LLVM Runtime Fallback
+If the AFAR drop does not ship `libpgmath.so`, `libflang.so`, `libflangrti.so`,
+or `libompstub.so`, the generator wires a fallback LLVM runtime lib directory
+into the `afar-amd` module. It auto-detects the newest `/opt/rocm-*/llvm/lib`
+that contains those libraries.
+
+To override:
+- `AFAR_LLVM_LIB_DIR=/path/to/llvm/lib`
+- `AFAR_PGMATH_DIR=/path/to/llvm/lib`
+
+## Maintenance Checklist
+- Update `.modules` to keep AFAR and ROCm versions paired.
+- Update `config/afar-versions.txt` when new drops appear.
+- Update `config/cray-mpich-dir.txt` when Cray MPICH paths change.
+- Re-run the generator and validate with a small compile test.

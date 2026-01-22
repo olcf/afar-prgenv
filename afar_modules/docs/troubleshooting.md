@@ -1,0 +1,146 @@
+# Troubleshooting
+
+This page lists common issues and quick diagnostics for the AFAR module tree.
+
+## Quick Diagnostics
+```
+module list
+which ftn
+which cc
+which CC
+echo "$AFAR_VERSION"
+echo "$CRAY_MPICH_VERSION"
+echo "$AFAR_MPICH_FLAVOR"
+pkg-config --cflags mpichf90
+```
+
+## Baseline Module Sequence (cpe/25.09)
+```
+module purge
+module load cpe/25.09
+module use /path/to/afar_modules/modulefiles
+module load PrgEnv-amd
+module load cray-mpich/9.0.1
+module load craype-x86-trento
+module load craype-accel-amd-gfx90a
+module load afar-prgenv/22.2.0-8873
+```
+
+## Example Test Commands
+Minimal OpenMP test (Fortran):
+```
+cat > omp_test.f90 <<'EOF'
+program main
+!$omp parallel
+print *, 'hello parallel'
+!$omp end parallel
+!$omp target
+print *, 'hello target'
+!$omp end target
+end program
+EOF
+
+ftn -fopenmp omp_test.f90 -o omp_test
+export OMP_NUM_THREADS=2
+./omp_test
+```
+
+Minimal OpenMP test (C):
+```
+cat > omp_test.c <<'EOF'
+#include <stdio.h>
+
+int main(void)
+{
+#pragma omp parallel
+  printf("Hello from parallel\n");
+
+#pragma omp target
+  printf("Hello from target\n");
+  return 0;
+}
+EOF
+
+cc -fopenmp omp_test.c -o omp_test
+export OMP_NUM_THREADS=2
+./omp_test
+```
+
+MPI sanity check (Fortran):
+```
+cat > mpi_hello.f90 <<'EOF'
+program hello_world
+  use mpi
+  implicit none
+  integer :: size, rank, ierr
+  call MPI_Init(ierr)
+  call MPI_Comm_size(MPI_COMM_WORLD, size, ierr)
+  call MPI_Comm_rank(MPI_COMM_WORLD, rank, ierr)
+  write(*,*) 'Hello, world! Process ', rank, ' of ', size
+  call MPI_Finalize(ierr)
+end program hello_world
+EOF
+
+ftn mpi_hello.f90 -o mpi_hello
+```
+
+## Common Issues
+
+### mpichf90.pc not found
+Symptoms:
+- `pkg-config --cflags mpichf90` fails
+
+Checks:
+- Ensure `afar-prgenv` is loaded.
+- Ensure `PE_AMD_FIXED_PKGCONFIG_PATH` is mirrored into `PKG_CONFIG_PATH`.
+- Use `ftn` wrapper to re-sync paths.
+
+### Wrong MPICH flavor selected
+Symptoms:
+- mpich 9.x but `pkg-config --cflags mpichf90` shows `mpich3.4a2`
+
+Fixes:
+- Re-run the compile via wrappers (`ftn`, `cc`, `CC`).
+- Verify `CRAY_MPICH_VERSION` and `AFAR_MPICH_FLAVOR`.
+
+### Wrappers not picked up
+Symptoms:
+- `which ftn` shows `/opt/cray/pe/craype/.../ftn`
+
+Fixes:
+- Reload `afar-prgenv` to re-prepend `afar_modules/bin` to `PATH`.
+- Verify `module use /path/to/afar_modules/modulefiles`.
+
+### OpenMP offload arch missing
+Symptoms:
+- Offload build fails without `--offload-arch`
+
+Fixes:
+- Ensure `craype-accel-amd-gfx90a` is loaded.
+- Set `AFAR_FTN_OFFLOAD_ARCH=gfx90a` (or language-specific overrides).
+- Pass `--offload-arch=gfx90a` explicitly to `ftn`/`cc`/`CC`.
+
+### Clang errors when compiling Fortran with cc
+Symptoms:
+- `cc hello.f90` fails with language or `-march` errors
+
+Fix:
+- Use `ftn` for Fortran sources. `cc` and `CC` are for C and C++.
+
+### AFAR modules refuse to load due to rocm/amd conflicts
+Symptoms:
+- Lmod error about `rocm` or `amd` already loaded
+
+Fix:
+- Load `afar-prgenv` (it unloads conflicting modules).
+- Or manually `module unload rocm amd` before loading AFAR.
+
+### LLVM runtime libs from /opt/rocm*
+Symptoms:
+- `ldd` shows `libpgmath.so` or `libflang.so` from `/opt/rocm-*`
+
+Explanation:
+- The AFAR drop may not ship those runtime libs; the module uses a fallback.
+
+Fix:
+- Set `AFAR_LLVM_LIB_DIR` to the correct AFAR runtime directory, then reload.

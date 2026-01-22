@@ -1,0 +1,174 @@
+=== Profile: base
+=== Modules: cpe/25.09 PrgEnv-amd cray-mpich/9.0.1 craype-x86-trento craype-accel-amd-gfx90a afar-prgenv/22.2.0-8873
+: is a shell builtin
+enable .
+enable :
+enable [
+enable alias
+enable bg
+enable bind
+enable break
+enable builtin
+enable caller
+enable cd
+enable command
+enable compgen
+enable complete
+enable compopt
+enable continue
+enable declare
+enable dirs
+enable disown
+enable echo
+enable enable
+enable eval
+enable exec
+enable exit
+enable export
+enable false
+enable fc
+enable fg
+enable getopts
+enable hash
+enable help
+enable history
+enable jobs
+enable kill
+enable let
+enable local
+enable logout
+enable mapfile
+enable popd
+enable printf
+enable pushd
+enable pwd
+enable read
+enable readarray
+enable readonly
+enable return
+enable set
+enable shift
+enable shopt
+enable source
+enable suspend
+enable test
+enable times
+enable trap
+enable true
+enable type
+enable typeset
+enable ulimit
+enable umask
+enable unalias
+enable unset
+enable wait
+LMOD_SETTARG_CMD=<unset>
+
+The following have been reloaded with a version change:
+  1) cce/20.0.0 => cce/18.0.1
+  2) cray-dsmml/0.3.1 => cray-dsmml/0.3.0
+  3) cray-libsci/25.09.0 => cray-libsci/24.11.0
+  4) cray-mpich/9.0.1 => cray-mpich/8.1.31
+  5) cray-pmi/6.1.16 => cray-pmi/6.1.15
+  6) craype/2.7.35 => craype/2.7.33
+  7) darshan-runtime/3.4.7-mpi => darshan-runtime/3.4.6-mpi
+  8) perftools-base/25.09.0 => perftools-base/24.11.0
+
+/opt/cray/pe/lmod/lmod/init/bash: line 113: : command not found
+/opt/cray/pe/lmod/lmod/init/bash: line 113: : command not found
+
+The following have been reloaded with a version change:
+  1) cce/18.0.1 => cce/20.0.0
+  2) cray-dsmml/0.3.0 => cray-dsmml/0.3.1
+  3) cray-libsci/24.11.0 => cray-libsci/25.09.0
+  4) cray-mpich/8.1.31 => cray-mpich/9.0.1
+  5) cray-pmi/6.1.15 => cray-pmi/6.1.16
+  6) craype/2.7.33 => craype/2.7.35
+  7) darshan-runtime/3.4.6-mpi => darshan-runtime/3.4.7-mpi
+  8) perftools-base/24.11.0 => perftools-base/25.09.0
+
+
+Lmod is automatically replacing "cce/20.0.0" with "amd/6.4.2".
+
+
+Lmod is automatically replacing "PrgEnv-cray/8.6.0" with "PrgEnv-amd/8.6.0".
+
+
+Inactive Modules:
+  1) darshan-runtime
+
+Due to MODULEPATH changes, the following have been reloaded:
+  1) cray-libsci/25.09.0     2) cray-mpich/9.0.1
+
+NOTE: disabling Cray MPICH GTL pkg-config vars to avoid ROCm 6 libamdhip64
+dependency. 
+NOTE: clearing CRAY_ACCEL_TARGET/CRAY_ACCEL_VENDOR because CrayPE offload flags
+use -Xopenmp-target which AFAR flang does not accept. AFAR will add
+--offload-arch=gfx90a for ftn/cc/CC when -fopenmp is used. 
+
+Currently Loaded Modules:
+  1) libfabric/1.22.0                12) craype/2.7.35
+  2) craype-network-ofi              13) cray-dsmml/0.3.1
+  3) xpmem/2.11.3-1.3_gdbda01a1eb3d  14) cray-libsci/25.09.0
+  4) Core/25.03                      15) PrgEnv-amd/8.6.0
+  5) tmux/3.4                        16) cray-mpich/9.0.1
+  6) hsi/default                     17) craype-x86-trento
+  7) lfs-wrapper/0.0.1               18) craype-accel-amd-gfx90a
+  8) DefApps                         19) afar-rocm/22.2.0-8873
+  9) cray-pmi/6.1.16                 20) afar-amd/22.2.0-8873
+ 10) perftools-base/25.09.0          21) afar-prgenv/22.2.0-8873
+ 11) cpe/25.09
+
+Inactive Modules:
+  1) darshan-runtime
+
+ 
+
+==> cmake-mpi-omp
+-- The C compiler identification is Clang 22.0.0
+-- The Fortran compiler identification is LLVMFlang 22.0.0
+-- Cray Programming Environment 2.7.35 C
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /ccs/home/oscarh/co/flang/afar_modules/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Cray Programming Environment 2.7.35 Fortran
+-- Detecting Fortran compiler ABI info
+-- Detecting Fortran compiler ABI info - done
+-- Check for working Fortran compiler: /ccs/home/oscarh/co/flang/afar_modules/bin/ftn - skipped
+-- Found MPI_C: /ccs/home/oscarh/co/flang/afar_modules/bin/cc (found version "4.0") 
+-- Found MPI_Fortran: /ccs/home/oscarh/co/flang/afar_modules/bin/ftn (found version "4.1") 
+-- Found MPI: TRUE (found version "4.0")  
+-- Found OpenMP_C: -fopenmp=libomp (found version "5.1") 
+-- Found OpenMP_Fortran: -openmp (found version "5.0") 
+-- Found OpenMP: TRUE (found version "5.1")  
+-- Configuring done (6.6s)
+-- Generating done (0.0s)
+-- Build files have been written to: /ccs/home/oscarh/co/flang/repro/cmake-mpi-omp/build/base
+[ 25%] Building C object CMakeFiles/c_hello.dir/hello.c.o
+[ 50%] Building Fortran object CMakeFiles/f_hello.dir/hello.f90.o
+AFAR wrapper: loaded filter file /ccs/home/oscarh/co/flang/afar_modules/bin/../config/wrapper-filter.txt
+AFAR wrapper: loaded unsupported flag file /ccs/home/oscarh/co/flang/afar_modules/bin/../config/wrapper-unsupported-flags.txt
+AFAR wrapper: loaded filter file /ccs/home/oscarh/co/flang/afar_modules/bin/../config/wrapper-filter.txt
+AFAR wrapper: loaded unsupported flag file /ccs/home/oscarh/co/flang/afar_modules/bin/../config/wrapper-unsupported-flags.txt
+[ 75%] Linking C executable c_hello
+AFAR wrapper: loaded filter file /ccs/home/oscarh/co/flang/afar_modules/bin/../config/wrapper-filter.txt
+AFAR wrapper: loaded unsupported flag file /ccs/home/oscarh/co/flang/afar_modules/bin/../config/wrapper-unsupported-flags.txt
+[ 75%] Built target c_hello
+[100%] Linking Fortran executable f_hello
+AFAR wrapper: loaded filter file /ccs/home/oscarh/co/flang/afar_modules/bin/../config/wrapper-filter.txt
+AFAR wrapper: loaded unsupported flag file /ccs/home/oscarh/co/flang/afar_modules/bin/../config/wrapper-unsupported-flags.txt
+[100%] Built target f_hello
+==> compile-only
+AFAR wrapper: loaded filter file /ccs/home/oscarh/co/flang/afar_modules/bin/../config/wrapper-filter.txt
+AFAR wrapper: loaded unsupported flag file /ccs/home/oscarh/co/flang/afar_modules/bin/../config/wrapper-unsupported-flags.txt
+==> mpi-hello
+AFAR wrapper: loaded filter file /ccs/home/oscarh/co/flang/afar_modules/bin/../config/wrapper-filter.txt
+AFAR wrapper: loaded unsupported flag file /ccs/home/oscarh/co/flang/afar_modules/bin/../config/wrapper-unsupported-flags.txt
+==> omp-c
+AFAR wrapper: loaded filter file /ccs/home/oscarh/co/flang/afar_modules/bin/../config/wrapper-filter.txt
+AFAR wrapper: loaded unsupported flag file /ccs/home/oscarh/co/flang/afar_modules/bin/../config/wrapper-unsupported-flags.txt
+==> omp-f90
+AFAR wrapper: loaded filter file /ccs/home/oscarh/co/flang/afar_modules/bin/../config/wrapper-filter.txt
+AFAR wrapper: loaded unsupported flag file /ccs/home/oscarh/co/flang/afar_modules/bin/../config/wrapper-unsupported-flags.txt

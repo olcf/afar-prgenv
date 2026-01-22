@@ -55,11 +55,6 @@ export AFAR_CXX_OFFLOAD_ARCH=gfx90a
 
 If you pass `--offload-arch` explicitly, the wrappers do not modify it.
 
-## CRAYPE_LINK_TYPE Guard
-The wrappers unset `CRAYPE_LINK_TYPE=dynamic` to avoid `-dynamic` in AFAR
-flang builds. This also protects the `cc` and `CC` wrappers if the CrayPE
-modules are loaded after AFAR.
-
 ## Debugging the Wrappers
 To see what the wrapper passes to the real compiler:
 ```
@@ -68,6 +63,37 @@ AFAR_REAL_FTN=/usr/bin/env ftn -fopenmp hello.f90 -o hello
 ```
 The `/usr/bin/env` trick prints the final argument list without executing
 the real compiler.
+
+## Unsupported Flag Audit
+Wrappers load an unsupported-flag pattern list and print matches to stderr.
+Use this to identify flags injected by build systems (CMake, Autotools) that
+AFAR flang does not accept.
+
+Default patterns live in:
+- `config/wrapper-unsupported-flags.txt`
+
+You can override the file path with:
+- `AFAR_WRAPPER_UNSUPPORTED=/path/to/unsupported.txt`
+
+The default filter includes `-dynamic` so `CRAYPE_LINK_TYPE=dynamic` does not
+break AFAR builds even if modules are loaded out of order.
+
+## Wrapper Filter and Mapping
+Wrappers can ignore or replace arguments based on a filter file. This is
+useful when you want to translate unsupported flags into supported ones.
+
+Default filter file:
+- `config/wrapper-filter.txt`
+
+Set a custom file path with:
+- `AFAR_WRAPPER_FILTER=/path/to/wrapper-filter.txt`
+
+Filter file syntax:
+```
+ignore <pattern>
+replace <pattern> <replacement...>
+```
+Patterns use shell globs. Replacements are whitespace-separated arguments.
 
 ## Best Practices
 - Prefer `ftn`, `cc`, and `CC` wrappers for builds unless explicitly testing

@@ -11,6 +11,7 @@ wrapper behavior evolve.
 - `docs/wrappers.md`: wrapper behavior and environment overrides.
 - `docs/mpich.md`: MPICH 8.x vs 9.x behavior and validation.
 - `docs/troubleshooting.md`: diagnostics and example tests.
+- `docs/testing.md`: test harness and repro layout.
 - `docs/admin-handoff.md`: admin checklist for deployment and updates.
 
 ## Update Triggers

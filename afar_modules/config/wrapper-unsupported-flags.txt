@@ -1,0 +1,7 @@
+-Xopenmp-target*
+-dynamic
+-ftree-vectorize
+-ffunction-sections
+-fdata-sections
+-march=
+-mcpu=

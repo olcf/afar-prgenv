@@ -1,0 +1,23 @@
+# AFAR wrapper filter rules.
+# Format:
+#   ignore <pattern>
+#   replace <pattern> <replacement...>
+#
+# Patterns use shell globs (see "man bash" for pattern syntax).
+# Replacements are whitespace-separated arguments.
+#
+# Active ignore rules:
+ignore -dynamic
+ignore -ftree-vectorize
+ignore -ffunction-sections
+ignore -fdata-sections
+#
+# Examples (uncomment to enable):
+# ignore -dynamic
+# ignore -ftree-vectorize
+# ignore -ffunction-sections
+# ignore -fdata-sections
+# ignore -Xopenmp-target*
+# ignore -fopenmp-targets*
+# replace -march=znver4 -mcpu=znver4
+# replace -march=native -mcpu=native

@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ "${CRAYPE_LINK_TYPE:-}" == "dynamic" ]]; then
-  unset CRAYPE_LINK_TYPE
-fi
+wrapper_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 prepend_env_path() {
   local var="$1"
@@ -17,6 +15,111 @@ prepend_env_path() {
   else
     export "${var}=${dir}"
   fi
+}
+
+trim_line() {
+  local line="$1"
+  line="${line#"${line%%[![:space:]]*}"}"
+  line="${line%"${line##*[![:space:]]}"}"
+  printf '%s' "${line}"
+}
+
+UNSUPPORTED_PATTERNS=()
+FILTER_ACTIONS=()
+FILTER_PATTERNS=()
+FILTER_REPLACEMENTS=()
+
+load_unsupported_patterns() {
+  local file="$1"
+  [[ -f "${file}" ]] || return 0
+  while IFS= read -r line || [[ -n "${line}" ]]; do
+    line="${line%%#*}"
+    line="$(trim_line "${line}")"
+    [[ -z "${line}" ]] && continue
+    UNSUPPORTED_PATTERNS+=("${line}")
+  done < "${file}"
+}
+
+load_filter_rules() {
+  local file="$1"
+  [[ -f "${file}" ]] || return 0
+  while IFS= read -r line || [[ -n "${line}" ]]; do
+    line="${line%%#*}"
+    line="$(trim_line "${line}")"
+    [[ -z "${line}" ]] && continue
+    local action="${line%% *}"
+    local rest="${line#* }"
+    [[ "${rest}" == "${line}" ]] && continue
+    local pattern="${rest%% *}"
+    local replacement=""
+    if [[ "${rest}" != "${pattern}" ]]; then
+      replacement="${rest#* }"
+    fi
+    [[ -z "${pattern}" ]] && continue
+    FILTER_ACTIONS+=("${action}")
+    FILTER_PATTERNS+=("${pattern}")
+    FILTER_REPLACEMENTS+=("${replacement}")
+  done < "${file}"
+}
+
+match_unsupported_pattern() {
+  local arg="$1"
+  local pat
+  for pat in "${UNSUPPORTED_PATTERNS[@]}"; do
+    if [[ "${arg}" == ${pat} ]]; then
+      printf '%s' "${pat}"
+      return 0
+    fi
+  done
+  return 1
+}
+
+apply_wrapper_filter() {
+  local args=("$@")
+  local filtered=()
+  local arg
+  for arg in "${args[@]}"; do
+    if [[ "${arg}" == "-dynamic" ]]; then
+      echo "AFAR wrapper: ignored -dynamic (built-in)" >&2
+      continue
+    fi
+    local unsupported=""
+    unsupported="$(match_unsupported_pattern "${arg}" || true)"
+    local action=""
+    local replacement=""
+    local i
+    for i in "${!FILTER_ACTIONS[@]}"; do
+      if [[ "${arg}" == ${FILTER_PATTERNS[$i]} ]]; then
+        action="${FILTER_ACTIONS[$i]}"
+        replacement="${FILTER_REPLACEMENTS[$i]}"
+        break
+      fi
+    done
+
+    if [[ -n "${unsupported}" ]]; then
+      if [[ "${action}" == "ignore" ]]; then
+        echo "AFAR wrapper: unsupported flag ignored via filter: ${arg} (pattern ${unsupported})" >&2
+      elif [[ "${action}" == "replace" ]]; then
+        echo "AFAR wrapper: unsupported flag replaced via filter: ${arg} -> ${replacement} (pattern ${unsupported})" >&2
+      else
+        echo "AFAR wrapper: unsupported flag: ${arg} (pattern ${unsupported}). Add to AFAR_WRAPPER_FILTER to ignore/replace." >&2
+      fi
+    fi
+
+    if [[ "${action}" == "ignore" ]]; then
+      continue
+    elif [[ "${action}" == "replace" ]]; then
+      if [[ -n "${replacement}" ]]; then
+        read -r -a rep_args <<< "${replacement}"
+        filtered+=("${rep_args[@]}")
+      fi
+    else
+      filtered+=("${arg}")
+    fi
+  done
+
+  set -- "${filtered[@]}"
+  printf '%s\0' "$@"
 }
 
 mirror_fixed_pkgconfig() {
@@ -60,6 +163,27 @@ apply_mpich_pkgconfig_override() {
 }
 
 apply_mpich_pkgconfig_override
+
+filter_file="${AFAR_WRAPPER_FILTER:-${wrapper_dir}/../config/wrapper-filter.txt}"
+unsupported_file="${AFAR_WRAPPER_UNSUPPORTED:-${wrapper_dir}/../config/wrapper-unsupported-flags.txt}"
+load_unsupported_patterns "${unsupported_file}"
+load_filter_rules "${filter_file}"
+if [[ -z "${AFAR_WRAPPER_FILTER_LOGGED:-}" ]]; then
+  if [[ -f "${filter_file}" ]]; then
+    echo "AFAR wrapper: loaded filter file ${filter_file}" >&2
+  else
+    echo "AFAR wrapper: filter file not found ${filter_file}" >&2
+  fi
+  if [[ -f "${unsupported_file}" ]]; then
+    echo "AFAR wrapper: loaded unsupported flag file ${unsupported_file}" >&2
+  else
+    echo "AFAR wrapper: unsupported flag file not found ${unsupported_file}" >&2
+  fi
+  export AFAR_WRAPPER_FILTER_LOGGED=1
+fi
+
+mapfile -d '' -t filtered_args < <(apply_wrapper_filter "$@")
+set -- "${filtered_args[@]}"
 
 real_cc="${AFAR_REAL_CC:-}"
 if [[ -z "${real_cc}" ]]; then
@@ -106,6 +230,10 @@ if [[ -n "${offload_arch}" ]]; then
   if [[ "${has_openmp}" -eq 1 && "${has_offload_arch}" -eq 0 ]]; then
     set -- "$@" "--offload-arch=${offload_arch}"
   fi
+fi
+
+if [[ "${CRAYPE_LINK_TYPE:-}" == "dynamic" ]]; then
+  unset CRAYPE_LINK_TYPE
 fi
 
 exec "${real_cc}" "$@"

@@ -26,6 +26,7 @@ modulepath with only a root path update and regeneration.
 - `docs/wrappers.md`: ftn/cc/CC wrapper behavior, offload arch injection, and overrides.
 - `docs/module-generation.md`: generating modulefiles, adding new AFAR drops, and config inputs.
 - `docs/troubleshooting.md`: common issues and diagnostics.
+- `docs/testing.md`: local test harness and repro layout.
 - `docs/admin-handoff.md`: site admin checklist for deployment and updates.
 - `docs/documentation-plan.md`: documentation maintenance plan and best practices.
 

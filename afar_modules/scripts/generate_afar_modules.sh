@@ -691,14 +691,6 @@ if rocm_version ~= "" and rocm_version ~= MOD_LEVEL then
   LmodError("afar-amd/" .. MOD_LEVEL .. " cannot be loaded while rocm/" .. rocm_version .. " is active.")
 end
 
-local link_type = os.getenv("CRAYPE_LINK_TYPE") or ""
-if link_type == "dynamic" then
-  if mode() == "load" then
-    LmodMessage("NOTE: clearing CRAYPE_LINK_TYPE=dynamic to avoid -dynamic with AFAR flang.")
-  end
-  unsetenv("CRAYPE_LINK_TYPE")
-end
-
 local accel_target = os.getenv("CRAY_ACCEL_TARGET") or ""
 local user_offload_arch = os.getenv("AFAR_FTN_OFFLOAD_ARCH") or ""
 local afar_offload_arch = user_offload_arch

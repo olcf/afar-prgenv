@@ -58,7 +58,6 @@ pkg-config search paths.
 ## Wrapper Behavior at Compile Time
 Each wrapper:
 - Locates the real CrayPE compiler (`ftn`, `cc`, or `CC`).
-- Unsets `CRAYPE_LINK_TYPE=dynamic` defensively if present.
 - Injects `--offload-arch` when `-fopenmp` is used and no offload arch is set.
 - Re-syncs `PE_AMD_FIXED_PKGCONFIG_PATH` and `PKG_CONFIG_PATH` for MPICH.
 

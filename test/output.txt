@@ -1,0 +1,179 @@
+/usr/bin/luac5.3: ...ome/oscarh/.cache/lmod/spiderT.frontier_x86_64_Linux.lua:81976: unexpected symbol near '='
+
+------------------------------------------------------------------------------------ [ Cray Programming Environment ] -------------------------------------------------------------------------------------
+   PrgEnv-amd/8.3.3               cce/18.0.1                   (D)      cray-libpals/1.2.12            (D)      cray-parallel-netcdf/1.12.3.13 (D)      gcc-native-mixed/13
+   PrgEnv-amd/8.4.0               cce/19.0.0                            cray-libsci/22.12.1.1                   cray-parallel-netcdf/1.12.3.15          gcc-native-mixed/13.2
+   PrgEnv-amd/8.5.0               cce/20.0.0                            cray-libsci/23.02.1.1                   cray-parallel-netcdf/1.12.3.17          gcc-native-mixed/14            (D)
+   PrgEnv-amd/8.6.0      (L,D)    cpe-cuda/22.12                        cray-libsci/23.05.1.4                   cray-parallel-netcdf/1.12.3.19          gcc-native-mixed/14.2
+   PrgEnv-cray-amd/8.3.3          cpe-cuda/23.03                        cray-libsci/23.09.1.1                   cray-pmi/6.1.8                          gcc-native/12.3
+   PrgEnv-cray-amd/8.4.0          cpe-cuda/23.05                        cray-libsci/23.12.5                     cray-pmi/6.1.10                         gcc-native/13.2
+   PrgEnv-cray-amd/8.5.0          cpe-cuda/23.09                        cray-libsci/24.03.0                     cray-pmi/6.1.11                         gcc-native/14.2                (D)
+   PrgEnv-cray-amd/8.6.0 (D)      cpe-cuda/23.12                        cray-libsci/24.07.0                     cray-pmi/6.1.12                         gcc/10.3.0
+   PrgEnv-cray/8.3.3              cpe-cuda/24.03                        cray-libsci/24.11.0            (L,D)    cray-pmi/6.1.13                         gcc/11.2.0
+   PrgEnv-cray/8.4.0              cpe-cuda/24.07                        cray-libsci/25.03.0                     cray-pmi/6.1.14                         gcc/12.2.0                     (D)
+   PrgEnv-cray/8.5.0              cpe-cuda/24.11               (D)      cray-libsci/25.09.0                     cray-pmi/6.1.15                (D)      gdb4hpc/4.14.6
+   PrgEnv-cray/8.6.0     (D)      cpe-cuda/25.03                        cray-libsci_acc/22.12.1.1               cray-pmi/6.1.15.21                      gdb4hpc/4.14.7
+   PrgEnv-gnu-amd/8.3.3           cpe-cuda/25.09                        cray-libsci_acc/23.05.1.1               cray-pmi/6.1.16                         gdb4hpc/4.15.0
+   PrgEnv-gnu-amd/8.4.0           cpe/22.12                             cray-libsci_acc/23.09.1.1               cray-python/3.9.13.1                    gdb4hpc/4.15.1
+   PrgEnv-gnu-amd/8.5.0           cpe/23.03                             cray-libsci_acc/23.12.0                 cray-python/3.10.10                     gdb4hpc/4.16.0
+   PrgEnv-gnu-amd/8.6.0  (D)      cpe/23.05                             cray-libsci_acc/24.03.1                 cray-python/3.11.5                      gdb4hpc/4.16.1
+   PrgEnv-gnu/8.3.3               cpe/23.09                             cray-libsci_acc/24.07.0                 cray-python/3.11.7             (D)      gdb4hpc/4.16.2
+   PrgEnv-gnu/8.4.0               cpe/23.12                             cray-libsci_acc/24.11.0        (D)      cray-stat/4.11.13                       gdb4hpc/4.16.3                 (D)
+   PrgEnv-gnu/8.5.0               cpe/24.03                             cray-libsci_acc/25.03.0                 cray-stat/4.12.0                        gdb4hpc/4.16.4
+   PrgEnv-gnu/8.6.0      (D)      cpe/24.07                             cray-libsci_acc/25.09.2                 cray-stat/4.12.1                        gdb4hpc/4.16.5
+   amd-mixed/5.3.0                cpe/24.11                    (D)      cray-mpich-abi/8.1.23                   cray-stat/4.12.2                        iobuf/2.0.10
+   amd-mixed/5.4.0                cpe/25.03                             cray-mpich-abi/8.1.25                   cray-stat/4.12.3                        libfabric/1.20.1
+   amd-mixed/5.4.3                cpe/25.09                             cray-mpich-abi/8.1.26                   cray-stat/4.12.4               (D)      libfabric/1.22.0               (L,D)
+   amd-mixed/5.5.0                cray-R/4.2.1.1                        cray-mpich-abi/8.1.27                   cray-stat/4.12.5                        lmod
+   amd-mixed/5.5.1                cray-R/4.2.1.2                        cray-mpich-abi/8.1.28                   cray-stat/4.12.6                        papi/6.0.0.17
+   amd-mixed/5.6.0                cray-R/4.3.1                          cray-mpich-abi/8.1.29                   cray-zmqnet/1.0.0              (D)      papi/7.0.0.1
+   amd-mixed/5.7.0                cray-R/4.3.2                          cray-mpich-abi/8.1.30                   cray-zmqnet/1.3.1                       papi/7.0.0.2
+   amd-mixed/5.7.1                cray-R/4.4.0                 (D)      cray-mpich-abi/8.1.31          (D)      cray-zmqnet/1.3.2                       papi/7.0.1.1
+   amd-mixed/6.0.0                cray-ccdb/4.12.13                     cray-mpich-abi/8.1.32                   craype-accel-amd-gfx908                 papi/7.0.1.2
+   amd-mixed/6.1.3                cray-ccdb/5.0.0                       cray-mpich-abi/8.1.33                   craype-accel-amd-gfx90a                 papi/7.1.0.1
+   amd-mixed/6.2.0                cray-ccdb/5.0.1                       cray-mpich-abi/9.0.0                    craype-accel-amd-gfx940                 papi/7.1.0.2
+   amd-mixed/6.2.4       (D)      cray-ccdb/5.0.2                       cray-mpich-abi/9.0.1                    craype-accel-amd-gfx942                 papi/7.1.0.4                   (D)
+   amd-mixed/6.3.1                cray-ccdb/5.0.3                       cray-mpich/8.1.23                       craype-accel-host                       papi/7.2.0.1
+   amd-mixed/6.4.0                cray-ccdb/5.0.4                       cray-mpich/8.1.25                       craype-accel-nvidia70                   papi/7.2.0.2
+   amd-mixed/6.4.1                cray-ccdb/5.0.5              (D)      cray-mpich/8.1.26                       craype-accel-nvidia80                   perftools-base/22.12.0
+   amd-mixed/6.4.2                cray-ccdb/5.0.6                       cray-mpich/8.1.27                       craype-accel-nvidia90                   perftools-base/23.03.0
+   amd-mixed/7.0.2                cray-ccdb/5.0.7                       cray-mpich/8.1.28                       craype-arm-grace                        perftools-base/23.05.0
+   amd/5.3.0                      cray-cti/2.15.14                      cray-mpich/8.1.29                       craype-hugepages128M                    perftools-base/23.09.0
+   amd/5.4.0                      cray-cti/2.16.0                       cray-mpich/8.1.30                       craype-hugepages16M                     perftools-base/23.12.0
+   amd/5.4.3                      cray-cti/2.17.1                       cray-mpich/8.1.31              (L,D)    craype-hugepages1G                      perftools-base/24.03.0
+   amd/5.5.1                      cray-cti/2.17.2                       cray-mpich/8.1.32                       craype-hugepages256M                    perftools-base/24.07.0
+   amd/5.6.0                      cray-cti/2.18.0                       cray-mpich/8.1.33                       craype-hugepages2G                      perftools-base/24.11.0         (D)
+   amd/5.7.0                      cray-cti/2.18.1                       cray-mpich/9.0.0                        craype-hugepages2M                      perftools-base/25.03.0
+   amd/5.7.1                      cray-cti/2.18.2                       cray-mpich/9.0.1                        craype-hugepages32M                     perftools-base/25.09.0
+   amd/6.0.0                      cray-cti/2.18.3                       cray-mpixlate/1.0.0.6                   craype-hugepages4M                      rocm/5.3.0
+   amd/6.1.3                      cray-cti/2.18.4                       cray-mpixlate/1.0.1.10                  craype-hugepages512M                    rocm/5.4.0
+   amd/6.2.0                      cray-cti/2.19.0              (D)      cray-mpixlate/1.0.1.11                  craype-hugepages64M                     rocm/5.4.3
+   amd/6.2.4             (D)      cray-cti/2.19.1                       cray-mpixlate/1.0.2                     craype-hugepages8M                      rocm/5.5.1
+   amd/6.3.1                      cray-cti/2.20.0                       cray-mpixlate/1.0.3                     craype-network-none                     rocm/5.6.0
+   amd/6.4.0                      cray-dsmml/0.2.2                      cray-mpixlate/1.0.4                     craype-network-ofi             (L)      rocm/5.7.0
+   amd/6.4.1                      cray-dsmml/0.3.0             (L,D)    cray-mpixlate/1.0.5                     craype-network-ucx                      rocm/5.7.1
+   amd/6.4.2                      cray-dsmml/0.3.1                      cray-mpixlate/1.0.6                     craype-x86-genoa                        rocm/6.0.0
+   amd/7.0.2                      cray-dyninst/12.1.1                   cray-mpixlate/1.0.7                     craype-x86-milan-x                      rocm/6.1.3
+   atp/3.14.16                    cray-dyninst/12.2.0                   cray-mpixlate/1.0.9            (D)      craype-x86-milan                        rocm/6.2.0
+   atp/3.14.18                    cray-dyninst/12.3.0                   cray-mrnet/5.0.4                        craype-x86-rome                         rocm/6.2.4                     (D)
+   atp/3.15.0                     cray-dyninst/12.3.1                   cray-mrnet/5.1.0                        craype-x86-spr-hbm                      rocm/6.3.1
+   atp/3.15.1                     cray-dyninst/12.3.2                   cray-mrnet/5.1.1                        craype-x86-spr                          rocm/6.4.0
+   atp/3.15.2                     cray-dyninst/12.3.4          (D)      cray-mrnet/5.1.2                        craype-x86-trento                       rocm/6.4.1
+   atp/3.15.3                     cray-dyninst/12.3.5                   cray-mrnet/5.1.3                        craype-x86-turin                        rocm/6.4.2
+   atp/3.15.4                     cray-dyninst/12.3.6                   cray-mrnet/5.1.4               (D)      craype/2.7.19                           rocm/7.0.2
+   atp/3.15.5            (D)      cray-hdf5-parallel/1.12.2.1           cray-mrnet/5.1.5                        craype/2.7.20                           sanitizers4hpc/1.0.4
+   atp/3.15.6                     cray-hdf5-parallel/1.12.2.3           cray-mrnet/5.1.6                        craype/2.7.21                           sanitizers4hpc/1.1.0
+   atp/3.15.7                     cray-hdf5-parallel/1.12.2.7           cray-openshmemx/11.5.7                  craype/2.7.23                           sanitizers4hpc/1.1.1
+   cce-mixed/15.0.0               cray-hdf5-parallel/1.12.2.9           cray-openshmemx/11.5.8                  craype/2.7.31.11                        sanitizers4hpc/1.1.2
+   cce-mixed/15.0.1               cray-hdf5-parallel/1.12.2.11          cray-openshmemx/11.6.0                  craype/2.7.32                           sanitizers4hpc/1.1.3
+   cce-mixed/16.0.0               cray-hdf5-parallel/1.14.3.1           cray-openshmemx/11.6.1                  craype/2.7.33                  (L,D)    sanitizers4hpc/1.1.4           (D)
+   cce-mixed/16.0.1               cray-hdf5-parallel/1.14.3.3           cray-openshmemx/11.7.0                  craype/2.7.34                           sanitizers4hpc/1.1.5
+   cce-mixed/17.0.0               cray-hdf5-parallel/1.14.3.5           cray-openshmemx/11.7.1                  craype/2.7.35                           sanitizers4hpc/1.1.6
+   cce-mixed/17.0.1               cray-hdf5-parallel/1.14.3.7  (D)      cray-openshmemx/11.7.2                  craypkg-gen/1.3.28                      settarg
+   cce-mixed/18.0.0               cray-hdf5/1.12.2.1                    cray-openshmemx/11.7.3         (D)      craypkg-gen/1.3.30                      valgrind4hpc/2.12.10
+   cce-mixed/18.0.1               cray-hdf5/1.12.2.3                    cray-openshmemx/11.7.4                  craypkg-gen/1.3.31                      valgrind4hpc/2.12.11
+   cce-mixed/19.0.0               cray-hdf5/1.12.2.7                    cray-openshmemx/11.8.0                  craypkg-gen/1.3.32                      valgrind4hpc/2.13.0
+   cce-mixed/20.0.0      (D)      cray-hdf5/1.12.2.9                    cray-pals/1.2.5                         craypkg-gen/1.3.33                      valgrind4hpc/2.13.1
+   cce/15.0.0                     cray-hdf5/1.12.2.11                   cray-pals/1.2.11                        craypkg-gen/1.3.34             (D)      valgrind4hpc/2.13.2
+   cce/15.0.1                     cray-hdf5/1.14.3.1                    cray-pals/1.2.12               (D)      craypkg-gen/1.3.35                      valgrind4hpc/2.13.3
+   cce/16.0.0                     cray-hdf5/1.14.3.3                    cray-parallel-netcdf/1.12.3.1           craypkg-gen/1.3.36                      valgrind4hpc/2.13.4            (D)
+   cce/16.0.1                     cray-hdf5/1.14.3.5                    cray-parallel-netcdf/1.12.3.3           gcc-mixed/11.2.0                        valgrind4hpc/2.13.5
+   cce/17.0.0                     cray-hdf5/1.14.3.7           (D)      cray-parallel-netcdf/1.12.3.7           gcc-mixed/12.2.0               (D)      valgrind4hpc/2.13.6
+   cce/17.0.1                     cray-libpals/1.2.5                    cray-parallel-netcdf/1.12.3.9           gcc-native-mixed/12                     xpmem/2.11.3-1.3_gdbda01a1eb3d
+   cce/18.0.0                     cray-libpals/1.2.11                   cray-parallel-netcdf/1.12.3.11          gcc-native-mixed/12.3
+
+-------------------------------------------------------------------------- /ccs/home/oscarh/codex/flang/afar_modules/modulefiles --------------------------------------------------------------------------
+   afar-amd/001-306         afar-amd/7.0.5-8248         afar-amd/4824                 afar-prgenv/6.1.0-7702          afar-prgenv/3804         afar-rocm/4.1.0-6356      afar-rocm/22.2.0-8873 (L)
+   afar-amd/001-400         afar-amd/7.1.0-8473         afar-amd/5097                 afar-prgenv/6.2.0-7992          afar-prgenv/4106         afar-rocm/5.1.0-6711      afar-rocm/1691
+   afar-amd/001-716         afar-amd/22.1.0-8705        afar-amd/5891          (D)    afar-prgenv/7.0.5-1-8248        afar-prgenv/4224         afar-rocm/6.0.0-7450      afar-rocm/3301
+   afar-amd/001-732         afar-amd/22.1.1-8705        afar-prgenv/001-306           afar-prgenv/7.0.5-8248          afar-prgenv/4824         afar-rocm/6.1.0-7702      afar-rocm/3804
+   afar-amd/4.1.0-6356      afar-amd/22.2.0-8873 (L)    afar-prgenv/001-400           afar-prgenv/7.1.0-8473          afar-prgenv/5097         afar-rocm/6.2.0-7992      afar-rocm/4106
+   afar-amd/5.1.0-6711      afar-amd/1691               afar-prgenv/001-716           afar-prgenv/22.1.0-8705         afar-prgenv/5891  (D)    afar-rocm/7.0.5-1-8248    afar-rocm/4224
+   afar-amd/6.0.0-7450      afar-amd/3301               afar-prgenv/001-732           afar-prgenv/22.1.1-8705         afar-rocm/001-306        afar-rocm/7.0.5-8248      afar-rocm/4824
+   afar-amd/6.1.0-7702      afar-amd/3804               afar-prgenv/4.1.0-6356        afar-prgenv/22.2.0-8873  (L)    afar-rocm/001-400        afar-rocm/7.1.0-8473      afar-rocm/5097
+   afar-amd/6.2.0-7992      afar-amd/4106               afar-prgenv/5.1.0-6711        afar-prgenv/1691                afar-rocm/001-716        afar-rocm/22.1.0-8705     afar-rocm/5891        (D)
+   afar-amd/7.0.5-1-8248    afar-amd/4224               afar-prgenv/6.0.0-7450        afar-prgenv/3301                afar-rocm/001-732        afar-rocm/22.1.1-8705
+
+---------------------------------------------------------------------------------- /sw/crusher/ums/compilers/modulefiles ----------------------------------------------------------------------------------
+   afar/16.0.0_5.2.0-716     afar/hipfort/22.0.0-8473        gcc/12.2.1-dev-20230227          gcc/14.1.0-dev-20240709    gcc/15.2.1-latest       llvm/16.0.0-20220919
+   afar/16.0.0_5.2.0-732     afar/openmpi/5.0.8              gcc/12.2.1-dev-20230424          gcc/14.1.0-latest          gcc/15.2.1-20251215     llvm/16.0.0-20221128
+   afar/17.0.0_5.6.0-1691    afar/openmpi/5.0.8-8705  (D)    gcc/12.2.1-codebench             gcc/14.1.0-20241001        gcc/16.0.0-latest       llvm/17.0.0-latest
+   afar/18.0.0-3301          aomp/15.0-3                     gcc/12.2.1-codebench-20230502    gcc/14.1.0-20250106        gcc/16.0.0-20250723     llvm/17.0.0-20230518
+   afar/19.0.0-3804          aomp/17.0-2                     gcc/13.1.1-dev-latest            gcc/14.1.0-20250214        llvm/14.0.0-latest      llvm/17.0.0-20230711
+   afar/19.0.0-4106          aomp/18.0-1                     gcc/13.1.1-dev-20230523          gcc/14.1.1-dev-latest      llvm/14.0.0-20220113    llvm/17.0.0-20230712
+   afar/19.0.0-4224          aomp/19.0-0                     gcc/13.1.1-dev-20230525          gcc/14.1.1-dev-20240709    llvm/14.0.0-20220114    llvm/19.1.0-latest
+   afar/19.0.0-4824          aomp/21.0-0              (D)    gcc/13.1.1-dev-20230605          gcc/14.1.1-dev-20240725    llvm/14.0.0-20220127    llvm/19.1.0-20240930
+   afar/19.0.0-5097          binutils/2.40                   gcc/13.1.1-dev-20230616          gcc/14.2.1-latest          llvm/15.0.0-latest      llvm/19.1.0-20241001
+   afar/19.0.0-5891          gcc/11.2.1-dev-20220127         gcc/13.1.1-dev-20230626          gcc/14.2.1-20250325        llvm/15.0.0-20220321    llvm/20.0.0-latest
+   afar/20.0.0-6356          gcc/11.2.1-dev-20220525         gcc/13.1.1-dev-20230713          gcc/14.2.1-20250403        llvm/15.0.0-20220404    llvm/20.0.0-20240930                                 (D)
+   afar/20.0.0-6711          gcc/11.2.1-dev-20220603         gcc/13.1.1-dev-20230719          gcc/14.2.1-20250424        llvm/15.0.0-20220408    rocprofiler-systems-dev/1.2.0-python-3.11.7-20250921
+   afar/21.0.0-7450          gcc/12.1.1-dev-20220718         gcc/13.2.1-dev-latest            gcc/14.2.1-20250501        llvm/15.0.0-20220425    rocprofiler-systems-dev/1.2.0-python-3.11.7-20250923
+   afar/21.0.0-7702          gcc/12.2.1-dev-latest           gcc/13.2.1-dev-20230727          gcc/14.2.1-20250502        llvm/15.0.0-20220502    rocprofiler-systems-dev/1.2.0-python-3.11.7-20251008
+   afar/21.0.0-7992          gcc/12.2.1-dev-20220916         gcc/13.2.1-dev-20230920          gcc/15.1.0-latest          llvm/15.0.0-20220615    rocprofiler-systems-dev/1.2.0-python-3.11.7-20251014 (D)
+   afar/22.0.0-8248          gcc/12.2.1-dev-20221128         gcc/13.2.1-dev-20231031          gcc/15.1.0-20250516        llvm/16.0.0-latest
+   afar/22.0.0-8473          gcc/12.2.1-dev-20221206         gcc/13.2.1-dev-20231128          gcc/15.1.0-20250530        llvm/16.0.0-20220801
+   afar/22.1.1-8705          gcc/12.2.1-dev-20230113         gcc/13.2.1-dev-20240430          gcc/15.1.0-20250619        llvm/16.0.0-20220810
+   afar/22.2.0-8873          gcc/12.2.1-dev-20230127         gcc/14.1.0-dev-latest            gcc/15.1.1-latest          llvm/16.0.0-20220901
+   afar/hdf5/1.14.5-mpi      gcc/12.2.1-dev-20230215         gcc/14.1.0-dev-20240705          gcc/15.1.1-20250703        llvm/16.0.0-20220916
+
+----------------------------------------------------------------------- /lustre/orion/world-shared/gen010/tools/install/modulefiles -----------------------------------------------------------------------
+   gcc/bad         papi/master-9dd86331557ea2ed27fb15ae992ebc70d7d24a63-rocm-6.4.0
+   gcc/native      scorep/9.0-PrgEnv-amd-8.6.0-cpe-24.11-rocm-6.4.0-papi-master-9dd86331557ea2ed27fb15ae992ebc70d7d24a63
+   gcc/t13.3.0     scorep/9.0-PrgEnv-cray-8.6.0-cpe-24.11-rocm-6.4.0-papi-master-9dd86331557ea2ed27fb15ae992ebc70d7d24a63
+   gcc/tt13.3.0    scorep/9.1-PrgEnv-amd-8.6.0-cpe-24.11-rocm-6.4.0-papi-master-9dd86331557ea2ed27fb15ae992ebc70d7d24a63
+   gcc/13.2        scorep/9.1-PrgEnv-cray-8.6.0-cpe-24.11-rocm-6.4.0-papi-master-9dd86331557ea2ed27fb15ae992ebc70d7d24a63
+   gcc/13.3.0      scorep/9.1-PrgEnv-gnu-8.6.0-cpe-24.11-rocm-6.4.0-papi-master-9dd86331557ea2ed27fb15ae992ebc70d7d24a63  (D)
+
+------------------------------------------------------------------------------- /ccs/proj/gen010/tools/install/modulefiles --------------------------------------------------------------------------------
+   aocl/aocl-linux-aocc-5.0.0_module                                    papi/7.2.0b1-rocm-6.2.4
+   papi/e-master-9e1f97a4979257a7fe4f4f04f842c1d23318a60b-rocm-6.2.4    papi/7.2.0b1-rocm-6.3.1
+   papi/master-c54046bc2c2a54ce97333d7f78900875d12b13f7-rocm-6.3.1      papi/2024.06.rocprof_sdk-adanalis-rocm-6.3.1
+   papi/master-rocm-6.3.1                                               papi/2024.06.rocprof_sdk-adanalis-rocm-6.3.2
+   papi/master-9dd86331557ea2ed27fb15ae992ebc70d7d24a63-rocm-6.4.0      papi/2024.06.rocprof_sdk-adanalis2-rocm-6.3.1
+   papi/master-17ded13a78c26988d3e8ff72daa130124aa02ed8-rocm-6.3.1      papi/2024.06.rocprof_sdk-adanalis3-rocm-6.3.1
+   papi/master-17ded13a78c26988d3e8ff72daa130124aa02ed8-rocm-6.4.0      scorep/base
+   papi/trunk-e-rocm-6.2.4                                              scorep/06ba1e9b-PrgEnv-cray-8.6.0-cpe-24.11-rocm-6.3.1-papi-master
+   papi/7.2.0b1-energy-zero-rocm-5.3.0                                  scorep/06ba1e9b-PrgEnv-cray-8.6.0-cpe-24.11-rocm-6.3.1-papi-2024.06.rocprof_sdk-adanalis3
+   papi/7.2.0b1-energy-zero-rocm-5.4.0                                  scorep/9.0-dev-debug-PrgEnv-amd-8.6.0-cpe-24.11-rocm-6.3.1-papi-master-c54046bc2c2a54ce97333d7f78900875d12b13f7
+   papi/7.2.0b1-energy-zero-rocm-5.4.3                                  scorep/9.0-dev-debug-PrgEnv-amd-8.6.0-cpe-24.11-rocm-6.3.1-papi-master
+   papi/7.2.0b1-energy-zero-rocm-5.5.1                                  scorep/9.0-dev-PrgEnv-cray-8.6.0-cpe-24.11-rocm-6.3.1-papi-master-c54046bc2c2a54ce97333d7f78900875d12b13f7
+   papi/7.2.0b1-energy-zero-rocm-5.6.0                                  scorep/9.0-dev-PrgEnv-cray-8.6.0-cpe-24.11-rocm-6.3.1-papi-master
+   papi/7.2.0b1-energy-zero-rocm-5.7.0                                  scorep/9.0-rc1-PrgEnv-amd-8.6.0-cpe-24.11-rocm-6.2.4-papi-7.2.0b1
+   papi/7.2.0b1-energy-zero-rocm-5.7.1                                  scorep/9.0-rc1-PrgEnv-amd-8.6.0-cpe-24.11-rocm-6.3.1-papi-master-17ded13a78c26988d3e8ff72daa130124aa02ed8
+   papi/7.2.0b1-energy-zero-rocm-6.1.3                                  scorep/9.0-rc1-PrgEnv-cray-amd-8.6.0-cpe-24.11-rocm-6.2.4-papi-7.2.0b1
+   papi/7.2.0b1-energy-zero-rocm-6.2.0                                  scorep/9.0-rc1-PrgEnv-cray-8.6.0-cpe-24.11-rocm-6.1.3-papi-7.2.0b1-energy-zero
+   papi/7.2.0b1-energy-zero-rocm-6.2.4                                  scorep/9.0-rc1-PrgEnv-cray-8.6.0-cpe-24.11-rocm-6.1.3-papi-7.2.0b1
+   papi/7.2.0b1-energy-zero-rocm-6.3.1                                  scorep/9.0-rc1-PrgEnv-cray-8.6.0-cpe-24.11-rocm-6.2.4-papi-e-master-9e1f97a4979257a7fe4f4f04f842c1d23318a60b
+   papi/7.2.0b1-rocm-5.3.0                                              scorep/9.0-rc1-PrgEnv-cray-8.6.0-cpe-24.11-rocm-6.2.4-papi-7.2.0b1
+   papi/7.2.0b1-rocm-5.4.0                                              scorep/9.0-rc1-PrgEnv-cray-8.6.0-cpe-24.11-rocm-6.3.1-papi-master-17ded13a78c26988d3e8ff72daa130124aa02ed8
+   papi/7.2.0b1-rocm-5.4.3                                              scorep/9.0-rc1-PrgEnv-cray-8.6.0-cpe-24.11-rocm-6.3.1-papi-7.1.0.4
+   papi/7.2.0b1-rocm-5.5.1                                              scorep/9.0-rc1-PrgEnv-cray-8.6.0-cpe-24.11-rocm-6.3.1-papi-2024.06.rocprof_sdk-adanalis
+   papi/7.2.0b1-rocm-5.6.0                                              scorep/9.0-rc1-PrgEnv-cray-8.6.0-cpe-24.11-rocm-6.3.1-papi-2024.06.rocprof_sdk-adanalis2
+   papi/7.2.0b1-rocm-5.7.0                                              scorep/9.0-rc1-PrgEnv-cray-8.6.0-cpe-24.11-rocm-6.3.2-papi-2024.06.rocprof_sdk-adanalis
+   papi/7.2.0b1-rocm-5.7.1                                              scorep/9.0-rc1-PrgEnv-gnu-amd-8.6.0-cpe-24.11-rocm-6.2.4-papi-7.2.0b1
+   papi/7.2.0b1-rocm-6.1.3                                              scorep/9.0-rc1-PrgEnv-gnu-8.6.0-cpe-24.11-rocm-6.2.4-papi-7.2.0b1
+   papi/7.2.0b1-rocm-6.2.0                                              scorep/9.0-PrgEnv-cray-8.6.0-cpe-24.11-rocm-6.4.0-papi-master-17ded13a78c26988d3e8ff72daa130124aa02ed8
+
+-------------------------------------------------------------------------------------------- [ Base Modules ] ---------------------------------------------------------------------------------------------
+   Core/24.00            codee/2025.2          cubew/4.8.2    (D)    hsi/default                 opari2/2.0.7                  rocprofiler-compute/3.0.0        scorep-gcc-amd/8.3
+   Core/24.07            codee/2025.3.7        entk/1.80.0           lfs-wrapper/0.0.1           opari2/2.0.8           (D)    rocprofiler-compute/3.1.0 (D)    swift-t/1.6.5
+   Core/25.03     (D)    codee/2025.3.9 (D)    flux/0.60.0           miniforge3/23.11.0-0        otf2/3.0.3                    rocprofiler-systems/1.0.1        tau/2.32
+   DefApps-spi           cubegui/4.8.1         forge/22.1.0rc        olcf-container-tools (E)    papi/7.0.1.0_rocm5.3          scorep-amd/8.3                   ums/default
+   DefApps               cubelib/4.8.1         forge/22.1.0          omniperf/1.0.10      (D)    parsl/2024.12.2               scorep-amdclang/8.3_debug        vampir/10.4.2
+   codee/2024.4.2        cubelib/4.8.2  (D)    forge/22.1.1          omniperf/2.0.1              python/3.10-miniforge3        scorep-amdclang/8.3       (D)    vampir/10.5.0
+   codee/2025.1          cubew/4.8.1           forge/23.1     (D)    omnitrace/1.11.4            radical.pilot/1.83.0          scorep-cray/8.4                  vampir/10.6.1      (D)
+
+  Where:
+   D:  Default Module
+   E:  Experimental
+   L:  Module is loaded
+
+If the avail list is too long consider trying:
+
+"module --default avail" or "ml -d av" to just list the default modules.
+"module overview" or "ml ov" to display the number of modules for each name.
+
+Use "module spider" to find all possible modules and extensions.
+Use "module keyword key1 key2 ..." to search for all possible modules matching any of the "keys".
+
+

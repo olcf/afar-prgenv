@@ -1,0 +1,10 @@
+*.o
+*.so
+*.a
+build/
+cmake-build-*/
+.env
+.DS_Store
+__pycache__/
+r
+AGENTS.md

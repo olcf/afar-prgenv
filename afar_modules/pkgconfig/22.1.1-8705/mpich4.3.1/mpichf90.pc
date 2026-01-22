@@ -1,0 +1,16 @@
+# This pc file was produced with generate_afar_modules.sh
+
+mpifclibname=mpifort_amd
+cray_prefix=/opt/cray/pe/mpich/8.1.31/ofi/amd/6.0
+version=8.1.31
+prefix=${cray_prefix}
+libdir=${prefix}/lib
+includedir=/autofs/nccs-svm1_sw/crusher/ums/compilers/afar/rocm-afar-8705-drop-22.1.1/include/mpich4.3.1
+
+Name: mpichf90
+Description: Cray MPI Fortran library (AFAR modules)
+Version: 8.1.31
+
+Requires: mpich
+Libs: -L${libdir} -l${mpifclibname}
+Cflags: -I${includedir}

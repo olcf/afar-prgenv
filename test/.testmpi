@@ -1,0 +1,9 @@
+  module purge
+  module use /ccs/home/oscarh/codex/flang/afar_modules/modulefiles
+  module load PrgEnv-amd
+  module load cray-mpich/9.0.1
+  module load afar-prgenv/22.2.0-8873
+  echo "$CRAY_MPICH_VERSION"
+  echo "$AFAR_MPICH_FLAVOR"
+  pkg-config --cflags mpichf90
+

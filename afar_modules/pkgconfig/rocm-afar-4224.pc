@@ -1,0 +1,18 @@
+# This pc file was produced with generate_afar_modules.sh
+
+Name: rocm-afar-4224
+Version: 4224
+Description: ROCm Toolkit (AFAR)
+
+rocm_prefix=/autofs/nccs-svm1_sw/crusher/ums/compilers/afar/rocm-afar-4224
+includedir=${rocm_prefix}/include
+libdir=${rocm_prefix}/lib
+
+profiler_includedir=${rocm_prefix}/include/rocprofiler
+profiler_libdir=${rocm_prefix}/lib/rocprofiler
+
+tracer_includedir=${rocm_prefix}/include/roctracer
+tracer_libdir=${rocm_prefix}/lib/roctracer
+
+Cflags: -I${includedir} -I${profiler_includedir} -I${tracer_includedir} -D__HIP_PLATFORM_AMD__
+Libs: -L${libdir} -L${profiler_libdir} -L${tracer_libdir} -lamdhip64

@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${CRAYPE_LINK_TYPE:-}" == "dynamic" ]]; then
+  unset CRAYPE_LINK_TYPE
+fi
+
+prepend_env_path() {
+  local var="$1"
+  local dir="$2"
+  local val="${!var:-}"
+  case ":${val}:" in
+    *":${dir}:"*) return 0 ;;
+  esac
+  if [[ -n "${val}" ]]; then
+    export "${var}=${dir}:${val}"
+  else
+    export "${var}=${dir}"
+  fi
+}
+
+mirror_fixed_pkgconfig() {
+  local fixed="${PE_AMD_FIXED_PKGCONFIG_PATH:-}"
+  local IFS=":"
+  read -r -a items <<< "${fixed}"
+  for ((idx=${#items[@]}-1; idx>=0; idx--)); do
+    [[ -n "${items[idx]}" ]] || continue
+    prepend_env_path PKG_CONFIG_PATH "${items[idx]}"
+  done
+}
+
+select_mpich_flavor() {
+  local ver="${CRAY_MPICH_VERSION:-}"
+  local major="${ver%%.*}"
+  if [[ -z "${major}" || ! "${major}" =~ ^[0-9]+$ ]]; then
+    return 1
+  fi
+  if (( major >= 9 )); then
+    printf '%s\n' "mpich4.3.1"
+  else
+    printf '%s\n' "mpich3.4a2"
+  fi
+}
+
+apply_mpich_pkgconfig_override() {
+  local flavor=""
+  flavor="$(select_mpich_flavor || true)"
+  if [[ -z "${flavor}" || -z "${AFAR_VERSION:-}" ]]; then
+    mirror_fixed_pkgconfig
+    return 0
+  fi
+  local wrapper_dir
+  wrapper_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  local mpich_pc_dir="${wrapper_dir}/../pkgconfig/${AFAR_VERSION}/${flavor}"
+  if [[ -f "${mpich_pc_dir}/mpichf90.pc" ]]; then
+    prepend_env_path PE_AMD_FIXED_PKGCONFIG_PATH "${mpich_pc_dir}"
+    export AFAR_MPICH_FLAVOR="${flavor}"
+  fi
+  mirror_fixed_pkgconfig
+}
+
+apply_mpich_pkgconfig_override
+
+real_cc="${AFAR_REAL_CC:-}"
+if [[ -z "${real_cc}" ]]; then
+  if [[ -n "${CRAYPE_DIR:-}" && -x "${CRAYPE_DIR}/bin/cc" ]]; then
+    real_cc="${CRAYPE_DIR}/bin/cc"
+  fi
+fi
+
+if [[ -z "${real_cc}" ]]; then
+  wrapper_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+  IFS=: read -r -a path_parts <<< "${PATH:-}"
+  for p in "${path_parts[@]}"; do
+    [[ -z "${p}" ]] && continue
+    if [[ "${p}" == "${wrapper_dir}" ]]; then
+      continue
+    fi
+    if [[ -x "${p}/cc" ]]; then
+      real_cc="${p}/cc"
+      break
+    fi
+  done
+fi
+
+if [[ -z "${real_cc}" ]]; then
+  echo "AFAR cc wrapper: unable to locate real cc in PATH." >&2
+  exit 127
+fi
+
+offload_arch="${AFAR_CC_OFFLOAD_ARCH:-${AFAR_FTN_OFFLOAD_ARCH:-}}"
+if [[ -n "${offload_arch}" ]]; then
+  has_openmp=0
+  has_offload_arch=0
+  for arg in "$@"; do
+    case "${arg}" in
+      -fopenmp|-fopenmp=*|-openmp|-qopenmp|-mp)
+        has_openmp=1
+        ;;
+      --offload-arch|--offload-arch=*)
+        has_offload_arch=1
+        ;;
+    esac
+  done
+
+  if [[ "${has_openmp}" -eq 1 && "${has_offload_arch}" -eq 0 ]]; then
+    set -- "$@" "--offload-arch=${offload_arch}"
+  fi
+fi
+
+exec "${real_cc}" "$@"

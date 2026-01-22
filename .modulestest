@@ -1,0 +1,8 @@
+odule purge
+module reset
+module load rocm/7.0.2
+module load amd/7.0.2
+module load PrgEnv-amd
+module use /ccs/home/oscarh/codex/flang/afar_modules/modulefiles
+module load afar/22.2.0-8873
+

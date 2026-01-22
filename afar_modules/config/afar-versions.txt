@@ -1,0 +1,24 @@
+# module-version|rocm-afar-dir
+22.2.0-8873|rocm-afar-8873-drop-22.2.0
+22.1.1-8705|rocm-afar-8705-drop-22.1.1
+22.1.0-8705|rocm-afar-8705-drop-22.1.0
+7.1.0-8473|rocm-afar-8473-drop-7.1.0
+7.0.5-1-8248|rocm-afar-8248-drop-7.0.5-1
+7.0.5-8248|rocm-afar-8248-drop-7.0.5
+6.2.0-7992|rocm-afar-7992-drop-6.2.0
+6.1.0-7702|rocm-afar-7702-drop-6.1.0
+6.0.0-7450|rocm-afar-7450-drop-6.0.0
+5.1.0-6711|rocm-afar-6711-drop-5.1.0
+4.1.0-6356|rocm-afar-6356-drop-4.1.0
+5891|rocm-afar-5891
+5097|rocm-afar-5097
+4824|rocm-afar-4824
+4224|rocm-afar-4224
+4106|rocm-afar-4106
+3804|rocm-afar-3804
+3301|rocm-afar-3301
+1691|rocm-afar-1691
+001-732|rocm-afar001-732
+001-716|rocm-afar001-716
+001-400|rocm-afar001-400
+001-306|rocm-afar001-306

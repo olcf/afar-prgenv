@@ -155,6 +155,8 @@ module_load_all() {
   if ! module reset >/dev/null 2>&1; then
     module purge
   fi
+  # Restore CPE defaults after module reset to avoid stale modulepath state.
+  source /opt/cray/pe/cpe/25.09/restore_lmod_system_defaults.sh
   module_use_paths "${MODULEPATHS}"
   local mod
   for mod in "${mods[@]}"; do

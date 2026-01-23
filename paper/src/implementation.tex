@@ -5,19 +5,23 @@ module hierarchy and lightweight wrapper logic. The overlay is intentionally
 minimal: it avoids replacing the PE and instead augments it with AFAR-specific
 paths, metadata, and diagnostics.
 
-\begin{figure}[t]
+\begin{figure*}[t]
   \centering
   \input{src/fig-architecture}
   \caption{Afar-prgenv overlay architecture. The Cray PE remains the primary
   interface; Afar-prgenv inserts AFAR compilers and ROCm while preserving PE
   wrapper semantics and library metadata.}
+  \Description{Block diagram showing user builds flowing through Cray wrappers
+  into AFAR compilers, with Afar-prgenv modules providing ROCm and pkg-config
+  metadata.}
   \label{fig:architecture}
-\end{figure}
+\end{figure*}
 
 \subsection{Module Hierarchy}
 \label{sec:modules}
-The module tree is split into a meta module (`afar-prgenv/<ver>`) and two
-component modules: `afar-rocm/<ver>` and `afar-amd/<ver>`. The meta module
+The module tree is split into a meta module (\texttt{afar-prgenv/<ver>}) and two
+component modules: \texttt{afar-rocm/\allowbreak <ver>} and
+\texttt{afar-amd/\allowbreak <ver>}. The meta module
 unloads conflicting vendor modules, then loads the ROCm toolkit module followed
 by the compiler module to ensure the compilers are last in `PATH`. This keeps
 the Cray PE wrappers stable while redirecting the underlying toolchain.
@@ -28,6 +32,7 @@ Afar-prgenv ships `ftn`, `cc`, and `CC` wrappers that preserve Cray PE behavior
 while injecting AFAR-specific fixes. The wrappers:
 \begin{itemize}
   \item Resolve the real Cray compiler driver and delegate to it.
+  \item Clear \texttt{CRAY\_ACCEL\_*} to avoid unsupported PE offload flags.
   \item Inject `--offload-arch` when `-fopenmp` is present and no offload arch
   is explicitly specified.
   \item Re-synchronize MPI metadata at invocation time to match the active

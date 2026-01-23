@@ -1,12 +1,12 @@
 \begin{tikzpicture}[
-  wfstep/.style={draw, rounded corners, align=center, minimum width=2.4cm, minimum height=0.9cm},
+  wfstep/.style={draw, rounded corners, align=center, minimum width=2.6cm, minimum height=0.9cm},
   arrow/.style={-Latex, thick}
 ]
   \node[wfstep] (drop) {AFAR\\drop};
-  \node[wfstep, right=1.2cm of drop] (gen) {Generate\\modules};
-  \node[wfstep, right=1.2cm of gen] (repro) {Repro\\tests};
-  \node[wfstep, right=1.2cm of repro] (validate) {Validation\\suites};
-  \node[wfstep, right=1.2cm of validate] (ready) {User-ready\\release};
+  \node[wfstep, below=0.5cm of drop] (gen) {Generate\\modules};
+  \node[wfstep, below=0.5cm of gen] (repro) {Repro\\tests};
+  \node[wfstep, below=0.5cm of repro] (validate) {Validation\\suites};
+  \node[wfstep, below=0.5cm of validate] (ready) {User-ready\\release};
 
   \draw[arrow] (drop) -- (gen);
   \draw[arrow] (gen) -- (repro);

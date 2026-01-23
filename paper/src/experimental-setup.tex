@@ -39,7 +39,8 @@ We use the repository repro suite to validate compile and link correctness:
 `compile-only`, `cmake-mpi-omp`, `wrapper-compile-link`, `mpi-hello`, `omp-c`,
 `omp-f90`, `libsci`, `libsci-acc`, `hdf5`, `fftw`, `dsmml`, and `netcdf`. The
 tests exercise the PE wrappers, MPI module files, and library metadata via
-`pkg-config`, and \texttt{scripts/check\_ldd.sh} validates the resulting binaries.
+\texttt{pkg-config}, and \texttt{scripts/\allowbreak check\_ldd.sh} validates the
+resulting binaries.
 The CMake repro requires \texttt{cmake} in \texttt{PATH}.
 
 The repro harness (\texttt{scripts/run\_afar\_tests.sh}) runs profiles that load each
@@ -57,7 +58,7 @@ scripts/run_afar_tests.sh --keep-going \
 \label{sec:metrics}
 The primary metric is functional readiness: all repro cases must compile and
 link with the PE wrappers and AFAR drop. Secondary metrics include the
-diagnostic completeness of wrapper logs, pass/skip/fail rates per test, and the
-time to validate a new drop. We also track module-order robustness by running
-the repro suite under multiple module load permutations to ensure metadata
+diagnostic completeness of wrapper logs, P/S/F rates per test, and the time to
+validate a new drop. We also track module-order robustness by running the repro
+suite under multiple module load permutations to ensure metadata
 re-synchronization remains correct.

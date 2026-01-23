@@ -1,16 +1,18 @@
 \begin{tikzpicture}[
-  box/.style={draw, rounded corners, align=center, minimum width=2.6cm, minimum height=0.9cm},
-  small/.style={draw, rounded corners, align=center, minimum width=2.2cm, minimum height=0.8cm},
+  scale=0.9,
+  transform shape,
+  box/.style={draw, rounded corners, align=center, minimum width=2.1cm, minimum height=0.9cm},
+  small/.style={draw, rounded corners, align=center, minimum width=1.9cm, minimum height=0.8cm},
   arrow/.style={-Latex, thick}
 ]
   \node[box] (user) {User build\\(CMake/Make)};
-  \node[box, right=1.8cm of user] (wrappers) {Cray wrappers\\\texttt{ftn/cc/CC}};
-  \node[box, right=1.8cm of wrappers] (compiler) {AFAR compiler\\drop};
+  \node[box, right=1.0cm of user] (wrappers) {Cray wrappers\\\texttt{ftn/\allowbreak cc/\allowbreak CC}};
+  \node[box, right=1.0cm of wrappers] (compiler) {AFAR compiler\\drop};
 
-  \node[small, below=1.2cm of wrappers] (pkg) {pkg-config\\metadata};
-  \node[small, below=1.2cm of compiler] (rocm) {ROCm toolkit};
+  \node[small, below=1.0cm of wrappers] (pkg) {pkg-config\\metadata};
+  \node[small, below=1.0cm of compiler] (rocm) {ROCm toolkit};
 
-  \node[box, below=1.2cm of user] (modules) {Afar-prgenv\\modules};
+  \node[box, below=1.0cm of user] (modules) {Afar-prgenv\\modules};
 
   \draw[arrow] (user) -- (wrappers);
   \draw[arrow] (wrappers) -- (compiler);

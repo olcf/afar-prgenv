@@ -7,23 +7,25 @@ or application-level validation.
 
 \begin{table}[t]
   \centering
+  \small
+  \setlength{\tabcolsep}{4pt}
   \caption{Repro suite coverage for the AFAR drop \afarversion. Status is
-  recorded as pass/skip/fail (P/S/F) for each test.}
+  recorded as P/S/F for each test.}
   \label{tab:repro}
-  \begin{tabular}{l l l}
+  \begin{tabular}{l l c}
     \hline
     Test & Coverage & Status (P/S/F) \\
     \hline
-    cmake-mpi-omp & CMake MPI/OpenMP & PASS \\
+    cmake-mpi-omp & CMake MPI+OMP & PASS \\
     compile-only & compiler sanity & PASS \\
-    wrapper-compile-link & wrapper compile+link & PASS \\
+    wrapper-compile-link & wrapper compile/link & PASS \\
     mpi-hello & MPI module integration & PASS \\
     omp-c & OpenMP offload (C) & PASS \\
-    omp-f90 & OpenMP offload (Fortran) & PASS \\
+    omp-f90 & OpenMP offload (F) & PASS \\
     libsci & PE math libs & PASS \\
     libsci-acc & accelerator libs & SKIP \\
-    hdf5-parallel & HDF5 (parallel) & SKIP \\
-    hdf5-serial & HDF5 (serial) & PASS \\
+    hdf5-parallel & HDF5 (par) & SKIP \\
+    hdf5-serial & HDF5 (ser) & PASS \\
     fftw & FFTW (C/C++/F) & PASS \\
     dsmml & DSMML & PASS \\
     netcdf & PnetCDF & PASS \\
@@ -31,8 +33,9 @@ or application-level validation.
   \end{tabular}
 \end{table}
 
-The `libsci-acc` profile is intentionally skipped because \texttt{libsci\_acc} linking
-is not yet validated and may depend on ROCm 6 runtime libraries. The parallel
+The `libsci-acc` profile is intentionally skipped; \texttt{libsci\_\allowbreak acc}
+linking is not yet validated and may depend on ROCm 6 runtime libraries. The
+parallel
 HDF5 test is skipped due to missing HDF5 C++ `pkg-config` metadata, while the
 serial HDF5 path passes.
 
@@ -40,6 +43,7 @@ serial HDF5 path passes.
   \centering
   \input{src/fig-repro-summary}
   \caption{Repro suite outcomes for \afarversion (unique tests).}
+  \Description{Bar chart summarizing repro outcomes: 11 passes, 2 skips, 0 fails.}
   \label{fig:repro-summary}
 \end{figure}
 
@@ -59,20 +63,22 @@ manual flag translation.
 To reflect real user behavior, we execute the repro suite across multiple
 module load permutations (e.g., library modules loaded before or after
 `afar-prgenv`). This checks that wrapper logic correctly re-synchronizes MPI
-and library metadata regardless of module ordering. We report pass/skip/fail
-outcomes per permutation and flag any regressions for follow-up.
+and library metadata regardless of module ordering. We report P/S/F outcomes
+per permutation and flag any regressions for follow-up.
 
 \begin{table}[t]
   \centering
+  \small
+  \setlength{\tabcolsep}{4pt}
   \caption{Module ordering permutations used to validate metadata
   re-synchronization.}
   \label{tab:ordering}
-  \begin{tabular}{l l l}
+  \begin{tabular}{l l c}
     \hline
     Permutation & Example & Status (P/S/F) \\
     \hline
-    Libraries before AFAR & load libs, then afar-prgenv & PASS \\
-    Libraries after AFAR & load afar-prgenv, then libs & PASS \\
+    Libs before AFAR & load libs, then afar-prgenv & PASS \\
+    Libs after AFAR & load afar-prgenv, then libs & PASS \\
     MPI swap after AFAR & swap cray-mpich post-load & N/A \\
     \hline
   \end{tabular}
@@ -86,10 +92,11 @@ planned check and was not exercised in this run.
 \label{sec:mpi-offload}
 MPI validation confirms that the wrappers resynchronize the MPI flavor on each
 invocation, preventing stale `pkg-config` metadata when modules are swapped.
-OpenMP offload tests confirm that `--offload-arch` is injected consistently for
-both C and Fortran workflows when `craype-accel-amd-gfx90a` is loaded (or when
-\texttt{AFAR\_\*\_OFFLOAD\_ARCH} overrides are set).
-The `mpi-hello`, `omp-c`, and `omp-f90` repros all pass in this evaluation.
+OpenMP offload tests confirm that `--offload-arch` is injected for both C and
+Fortran workflows. This is exercised with the PE module
+\texttt{craype-accel-}\allowbreak\texttt{amd-gfx90a}. Overrides via
+\texttt{AFAR\_\*\_OFFLOAD\_ARCH} are also covered. The `mpi-hello`, `omp-c`, and
+`omp-f90` repros all pass in this evaluation.
 
 \subsection{Library Compatibility}
 \label{sec:libraries}

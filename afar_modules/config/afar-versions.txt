@@ -1,4 +1,5 @@
 # module-version|rocm-afar-dir
+22.3.0-10004|rocm-afar-10004-drop-22.3.0
 22.2.0-8873|rocm-afar-8873-drop-22.2.0
 22.1.1-8705|rocm-afar-8705-drop-22.1.1
 22.1.0-8705|rocm-afar-8705-drop-22.1.0

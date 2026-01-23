@@ -208,34 +208,37 @@ maybe_generate_pkgconfig_shims() {
   local shim_script="${wrapper_dir}/../scripts/generate_pkgconfig_shims.sh"
   [[ -x "${shim_script}" ]] || return 0
   local key
-  key="$(printf '%s|' \
-    "${AFAR_VERSION:-}" \
-    "${CRAY_MPICH_VERSION:-}" \
-    "${PE_PKGCONFIG_PRODUCTS:-}" \
-    "${PE_PKGCONFIG_LIBS:-}" \
-    "${PE_FORTRAN_PKGCONFIG_LIBS:-}" \
-    "${PE_CXX_PKGCONFIG_LIBS:-}" \
-    "${CRAY_HDF5_DIR:-}" \
-    "${CRAY_HDF5_PARALLEL_DIR:-}" \
-    "${CRAY_HDF5_PREFIX:-}" \
-    "${CRAY_HDF5_PARALLEL_PREFIX:-}" \
-    "${CRAY_FFTW_PREFIX:-}" \
-    "${FFTW_ROOT:-}" \
-    "${CRAY_DSMML_PREFIX:-}" \
-    "${CRAY_DSMML_DIR:-}" \
-    "${CRAY_PARALLEL_NETCDF_PREFIX:-}" \
-    "${CRAY_PARALLEL_NETCDF_DIR:-}" \
-    "${PNETCDF_DIR:-}" \
-    "${CRAY_LIBSCI_PREFIX_DIR:-}" \
-    "${CRAY_LIBSCI_ACC_PREFIX_DIR:-}" \
-    "${PE_LIBSCI_PKGCONFIG_VARIABLES:-}" \
-    "${PE_LIBSCI_ACC_PKGCONFIG_VARIABLES:-}" \
-    "${PE_HDF5_PKGCONFIG_LIBS:-}" \
-    "${PE_HDF5_PARALLEL_PKGCONFIG_LIBS:-}" \
-    "${PE_PARALLEL_NETCDF_PKGCONFIG_LIBS:-}" \
-    "${PE_DSMML_PKGCONFIG_LIBS:-}" \
-    "${PE_FFTW_PKGCONFIG_LIBS:-}" \
-    "${AFAR_PKGCONFIG_SHIM_DIR:-}")
+  local key_parts=(
+    "${AFAR_VERSION:-}"
+    "${CRAY_MPICH_VERSION:-}"
+    "${PE_PKGCONFIG_PRODUCTS:-}"
+    "${PE_PKGCONFIG_LIBS:-}"
+    "${PE_FORTRAN_PKGCONFIG_LIBS:-}"
+    "${PE_CXX_PKGCONFIG_LIBS:-}"
+    "${CRAY_HDF5_DIR:-}"
+    "${CRAY_HDF5_PARALLEL_DIR:-}"
+    "${CRAY_HDF5_PREFIX:-}"
+    "${CRAY_HDF5_PARALLEL_PREFIX:-}"
+    "${CRAY_FFTW_PREFIX:-}"
+    "${FFTW_ROOT:-}"
+    "${CRAY_DSMML_PREFIX:-}"
+    "${CRAY_DSMML_DIR:-}"
+    "${CRAY_PARALLEL_NETCDF_PREFIX:-}"
+    "${CRAY_PARALLEL_NETCDF_DIR:-}"
+    "${PNETCDF_DIR:-}"
+    "${CRAY_LIBSCI_PREFIX_DIR:-}"
+    "${CRAY_LIBSCI_ACC_PREFIX_DIR:-}"
+    "${PE_LIBSCI_PKGCONFIG_VARIABLES:-}"
+    "${PE_LIBSCI_ACC_PKGCONFIG_VARIABLES:-}"
+    "${PE_HDF5_PKGCONFIG_LIBS:-}"
+    "${PE_HDF5_PARALLEL_PKGCONFIG_LIBS:-}"
+    "${PE_PARALLEL_NETCDF_PKGCONFIG_LIBS:-}"
+    "${PE_DSMML_PKGCONFIG_LIBS:-}"
+    "${PE_FFTW_PKGCONFIG_LIBS:-}"
+    "${AFAR_PKGCONFIG_SHIM_DIR:-}"
+  )
+  local IFS='|'
+  key="${key_parts[*]}"
   if [[ "${key}" == "${AFAR_PKGCONFIG_SHIM_KEY:-}" ]]; then
     return 0
   fi

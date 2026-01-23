@@ -21,6 +21,7 @@ DSMML_MODULE_DEFAULT="${AFAR_TEST_DSMML_MODULE:-cray-dsmml}"
 PAR_NETCDF_MODULE_DEFAULT="${AFAR_TEST_PARALLEL_NETCDF_MODULE:-cray-parallel-netcdf}"
 
 PROFILES_DEFAULT="${AFAR_TEST_PROFILES:-base,libsci,libsci-acc,hdf5,hdf5-serial,fftw,dsmml,netcdf}"
+LIB_ORDER_DEFAULT="${AFAR_TEST_LIB_ORDER:-both}"
 
 usage() {
   cat <<EOF
@@ -34,6 +35,7 @@ Options:
   --cpe <module>        CPE module (default: ${CPE_DEFAULT})
   --prgenv <module>     PrgEnv module (default: ${PRGENV_DEFAULT})
   --mpich <module>      Cray MPICH module (default: ${MPICH_DEFAULT})
+  --lib-order <value>   Library load order: before, after, both (default: ${LIB_ORDER_DEFAULT})
   --keep-going          Continue after failures
   -h, --help            Show this help
 EOF
@@ -47,6 +49,7 @@ CPE_MODULE="${CPE_DEFAULT}"
 PRGENV_MODULE="${PRGENV_DEFAULT}"
 MPICH_MODULE="${MPICH_DEFAULT}"
 KEEP_GOING="false"
+LIB_ORDER="${LIB_ORDER_DEFAULT}"
 
 RESULTS=()
 
@@ -107,6 +110,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --mpich)
       MPICH_MODULE="${2:-}"
+      shift 2
+      ;;
+    --lib-order)
+      LIB_ORDER="${2:-}"
       shift 2
       ;;
     --keep-going)
@@ -276,67 +283,26 @@ run_repro() {
   return 0
 }
 
-run_profile() {
-  local profile="$1"
-  local modules=()
-  case "${profile}" in
-    base)
-      modules=("${CPE_MODULE}" "${PRGENV_MODULE}" "${MPICH_MODULE}" \
-        "${CPU_TARGET_DEFAULT}" "${GPU_TARGET_DEFAULT}" "${AFAR_MODULE}")
-      ;;
-    libsci)
-      modules=("${CPE_MODULE}" "${PRGENV_MODULE}" "${MPICH_MODULE}" \
-        "${CPU_TARGET_DEFAULT}" "${GPU_TARGET_DEFAULT}" "${LIBSCI_MODULE_DEFAULT}" \
-        "${AFAR_MODULE}")
-      ;;
-    libsci-acc)
-      modules=("${CPE_MODULE}" "${PRGENV_MODULE}" "${MPICH_MODULE}" \
-        "${CPU_TARGET_DEFAULT}" "${GPU_TARGET_DEFAULT}" "${LIBSCI_ACC_MODULE_DEFAULT}" \
-        "${AFAR_MODULE}")
-      ;;
-    hdf5)
-      modules=("${CPE_MODULE}" "${PRGENV_MODULE}" "${MPICH_MODULE}" \
-        "${CPU_TARGET_DEFAULT}" "${GPU_TARGET_DEFAULT}" "${HDF5_MODULE_DEFAULT}" \
-        "${AFAR_MODULE}")
-      ;;
-    hdf5-serial)
-      modules=("${CPE_MODULE}" "${PRGENV_MODULE}" "${MPICH_MODULE}" \
-        "${CPU_TARGET_DEFAULT}" "${GPU_TARGET_DEFAULT}" "${HDF5_SERIAL_MODULE_DEFAULT}" \
-        "${AFAR_MODULE}")
-      ;;
-    fftw)
-      modules=("${CPE_MODULE}" "${PRGENV_MODULE}" "${MPICH_MODULE}" \
-        "${CPU_TARGET_DEFAULT}" "${GPU_TARGET_DEFAULT}" "${FFTW_MODULE_DEFAULT}" \
-        "${AFAR_MODULE}")
-      ;;
-    dsmml)
-      modules=("${CPE_MODULE}" "${PRGENV_MODULE}" "${MPICH_MODULE}" \
-        "${CPU_TARGET_DEFAULT}" "${GPU_TARGET_DEFAULT}" "${DSMML_MODULE_DEFAULT}" \
-        "${AFAR_MODULE}")
-      ;;
-    netcdf)
-      modules=("${CPE_MODULE}" "${PRGENV_MODULE}" "${MPICH_MODULE}" \
-        "${CPU_TARGET_DEFAULT}" "${GPU_TARGET_DEFAULT}" "${PAR_NETCDF_MODULE_DEFAULT}" \
-        "${AFAR_MODULE}")
-      ;;
-    *)
-      echo "Unknown profile: ${profile}" >&2
-      return 1
-      ;;
-  esac
+run_profile_once() {
+  local base_profile="$1"
+  local profile_label="$2"
+  local order="$3"
+  shift 3
+  local modules=("$@")
 
   local log_dir="${AFAR_TEST_LOG_DIR:-${ROOT_DIR}/logs}"
   mkdir -p "${log_dir}"
   local timestamp
   timestamp="$(date +%Y%m%d-%H%M%S)"
-  local log_file="${log_dir}/${timestamp}-${profile}.log"
+  local log_file="${log_dir}/${timestamp}-${profile_label}.log"
 
   {
-    echo "=== Profile: ${profile}"
+    echo "=== Profile: ${profile_label}"
+    echo "=== Module Order: ${order}"
     echo "=== Modules: ${modules[*]}"
     if ! module_load_all "${modules[@]}"; then
-      echo "SKIP: profile ${profile} (module load failure)"
-      record_result "${profile}" "(module-load)" "FAIL" "module load failure"
+      echo "SKIP: profile ${profile_label} (module load failure)"
+      record_result "${profile_label}" "(module-load)" "FAIL" "module load failure"
       return 1
     fi
     local ftn_path=""
@@ -353,13 +319,13 @@ run_profile() {
 
     add_pkgconfig_shims
 
-    if [[ "${profile}" == "libsci-acc" ]]; then
+    if [[ "${base_profile}" == "libsci-acc" ]]; then
       local skip_reason="libsci-acc profile disabled (libsci_acc link not validated)."
       echo "SKIP: ${skip_reason}"
       local repro_dir
       for repro_dir in "${ROOT_DIR}/repro/"*; do
         [[ -d "${repro_dir}" ]] || continue
-        record_result "${profile}" "$(basename "${repro_dir}")" "SKIP" "${skip_reason}"
+        record_result "${profile_label}" "$(basename "${repro_dir}")" "SKIP" "${skip_reason}"
       done
       return 0
     fi
@@ -367,8 +333,8 @@ run_profile() {
     local repro_dir
     for repro_dir in "${ROOT_DIR}/repro/"*; do
       [[ -d "${repro_dir}" ]] || continue
-      if ! run_repro "${profile}" "${repro_dir}"; then
-        echo "FAIL: ${profile} -> $(basename "${repro_dir}")"
+      if ! run_repro "${profile_label}" "${repro_dir}"; then
+        echo "FAIL: ${profile_label} -> $(basename "${repro_dir}")"
         if [[ "${KEEP_GOING}" != "true" ]]; then
           return 1
         fi
@@ -376,6 +342,92 @@ run_profile() {
     done
   } > >(tee "${log_file}") 2>&1
 }
+
+run_profile() {
+  local profile="$1"
+  local base_modules=("${CPE_MODULE}" "${PRGENV_MODULE}" "${MPICH_MODULE}"     "${CPU_TARGET_DEFAULT}" "${GPU_TARGET_DEFAULT}")
+  local lib_module=""
+  case "${profile}" in
+    base)
+      lib_module=""
+      ;;
+    libsci)
+      lib_module="${LIBSCI_MODULE_DEFAULT}"
+      ;;
+    libsci-acc)
+      lib_module="${LIBSCI_ACC_MODULE_DEFAULT}"
+      ;;
+    hdf5)
+      lib_module="${HDF5_MODULE_DEFAULT}"
+      ;;
+    hdf5-serial)
+      lib_module="${HDF5_SERIAL_MODULE_DEFAULT}"
+      ;;
+    fftw)
+      lib_module="${FFTW_MODULE_DEFAULT}"
+      ;;
+    dsmml)
+      lib_module="${DSMML_MODULE_DEFAULT}"
+      ;;
+    netcdf)
+      lib_module="${PAR_NETCDF_MODULE_DEFAULT}"
+      ;;
+    *)
+      echo "Unknown profile: ${profile}" >&2
+      return 1
+      ;;
+  esac
+
+  local orders=()
+  if [[ -z "${lib_module}" ]]; then
+    orders=("before")
+  else
+    case "${LIB_ORDER}" in
+      before)
+        orders=("before")
+        ;;
+      after)
+        orders=("after")
+        ;;
+      both|"")
+        orders=("before" "after")
+        ;;
+      *)
+        echo "Unknown library order: ${LIB_ORDER}" >&2
+        return 1
+        ;;
+    esac
+  fi
+
+  local order
+  local failures=0
+  for order in "${orders[@]}"; do
+    local profile_label="${profile}"
+    if [[ -n "${lib_module}" && "${order}" == "after" ]]; then
+      profile_label="${profile}-after"
+    fi
+    local modules=()
+    if [[ -z "${lib_module}" ]]; then
+      modules=("${base_modules[@]}" "${AFAR_MODULE}")
+    elif [[ "${order}" == "before" ]]; then
+      modules=("${base_modules[@]}" "${lib_module}" "${AFAR_MODULE}")
+    else
+      modules=("${base_modules[@]}" "${AFAR_MODULE}" "${lib_module}")
+    fi
+
+    if ! run_profile_once "${profile}" "${profile_label}" "${order}" "${modules[@]}"; then
+      failures=$((failures + 1))
+      if [[ "${KEEP_GOING}" != "true" ]]; then
+        return 1
+      fi
+    fi
+  done
+
+  if [[ "${failures}" -gt 0 ]]; then
+    return 1
+  fi
+}
+
 
 failures=0
 while IFS= read -r profile; do

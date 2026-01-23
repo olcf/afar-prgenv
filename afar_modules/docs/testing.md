@@ -31,6 +31,19 @@ Run the full matrix:
 scripts/run_afar_tests.sh --keep-going
 ```
 
+By default the runner loads each library module both before and after
+`afar-prgenv` to validate order-independence. Control this with:
+```
+# Only load libraries before afar-prgenv
+scripts/run_afar_tests.sh --lib-order before
+
+# Only load libraries after afar-prgenv
+scripts/run_afar_tests.sh --lib-order after
+
+# Default (both)
+scripts/run_afar_tests.sh --lib-order both
+```
+
 Run only a subset:
 ```
 scripts/run_afar_tests.sh --profiles base,libsci

@@ -1,0 +1,37 @@
+\section{Background}
+\label{sec:background}
+This section summarizes the Cray Programming Environment, the AFAR compiler
+drop model, and the Frontier system context used in this study.
+
+\subsection{Cray Programming Environment}
+\label{sec:cray-pe}
+The Cray PE exposes consistent compiler drivers (`ftn`, `cc`, and `CC`) backed
+by a module hierarchy. Users load a `cpe/<ver>` module and a corresponding
+`PrgEnv-*` module (e.g., `PrgEnv-amd/\prgenvversion`) which configure compiler
+wrappers, MPI integration, and library metadata. The wrappers embed PE-specific
+assumptions about flag handling and \texttt{PKG\_CONFIG\_PATH} (including the
+\texttt{PE\_AMD\_FIXED\_PKGCONFIG\_PATH} convention), and most build systems assume those
+semantics remain stable.
+
+\subsection{AMD Compiler and ROCm Drops}
+\label{sec:amd-drops}
+AFAR drops bundle AMD compilers with a matched ROCm toolkit, and they are
+released on a rapid cadence. Each drop requires validation against Cray PE
+libraries and MPI, but the drops themselves do not integrate with the PE
+module hierarchy. Afar-prgenv provides that integration layer while preserving
+PE wrapper behavior.
+
+At the time of this evaluation, the latest AFAR drop available on Frontier is
+\afarversion, paired with `rocm/\afarrocm` and `amd/\afarrocm`.
+While AFAR drops ship their own ROCm runtime, site workflows may still load a
+system ROCm module (such as `rocm/\afarrocm`) to satisfy dependencies of
+selected vendor libraries that lag behind the drop.
+
+\subsection{Frontier as a Target System}
+\label{sec:frontier}
+Frontier is an HPE Cray EX system with AMD GPUs. The system uses a
+module-driven PE; at the time of this work, `cpe/\peversion` and
+`PrgEnv-amd/\prgenvversion` are available. The recommended baseline for AFAR
+testing in this workspace loads `rocm/\afarrocm` and `amd/\afarrocm` alongside
+`PrgEnv-amd`, then adds the AFAR module tree from
+`/sw/crusher/ums/compilers/modulefiles/`.

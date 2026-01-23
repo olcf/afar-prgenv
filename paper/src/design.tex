@@ -1,0 +1,19 @@
+\section{Design Goals}
+\label{sec:design}
+The design targets minimal disruption to the Cray PE workflow, reproducibility
+for support teams, and portability across Cray/HPE systems. The primary
+assumption is that user build systems and support tooling already depend on PE
+wrappers and module semantics.
+
+\begin{itemize}
+  \item Preserve Cray wrapper semantics while enabling AMD compiler drops.
+  \item Keep module interactions deterministic and reversible.
+  \item Provide consistent MPI and library metadata via pkg-config.
+  \item Support rapid testing with clear diagnostics for support staff.
+\end{itemize}
+
+\subsection{Non-Goals}
+\label{sec:nongoals}
+We do not replace the Cray PE or provide a new package manager. Instead, we
+focus on the narrow but critical gap between AFAR drop availability and PE
+integration, prioritizing correctness and compatibility over performance tuning.

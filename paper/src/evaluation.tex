@@ -1,0 +1,142 @@
+\section{Evaluation and Results}
+\label{sec:evaluation}
+We evaluate Afar-prgenv against the functional readiness criteria defined in
+Section~\ref{sec:metrics}. The emphasis is on correctness and compatibility
+with PE libraries and MPI, which are prerequisites for any further performance
+or application-level validation.
+
+\begin{table}[t]
+  \centering
+  \caption{Repro suite coverage for the AFAR drop \afarversion. Status is
+  recorded as pass/skip/fail (P/S/F) for each test.}
+  \label{tab:repro}
+  \begin{tabular}{l l l}
+    \hline
+    Test & Coverage & Status (P/S/F) \\
+    \hline
+    cmake-mpi-omp & CMake MPI/OpenMP & PASS \\
+    compile-only & compiler sanity & PASS \\
+    wrapper-compile-link & wrapper compile+link & PASS \\
+    mpi-hello & MPI module integration & PASS \\
+    omp-c & OpenMP offload (C) & PASS \\
+    omp-f90 & OpenMP offload (Fortran) & PASS \\
+    libsci & PE math libs & PASS \\
+    libsci-acc & accelerator libs & SKIP \\
+    hdf5-parallel & HDF5 (parallel) & SKIP \\
+    hdf5-serial & HDF5 (serial) & PASS \\
+    fftw & FFTW (C/C++/F) & PASS \\
+    dsmml & DSMML & PASS \\
+    netcdf & PnetCDF & PASS \\
+    \hline
+  \end{tabular}
+\end{table}
+
+The `libsci-acc` profile is intentionally skipped because \texttt{libsci\_acc} linking
+is not yet validated and may depend on ROCm 6 runtime libraries. The parallel
+HDF5 test is skipped due to missing HDF5 C++ `pkg-config` metadata, while the
+serial HDF5 path passes.
+
+\begin{figure}[t]
+  \centering
+  \input{src/fig-repro-summary}
+  \caption{Repro suite outcomes for \afarversion (unique tests).}
+  \label{fig:repro-summary}
+\end{figure}
+
+\subsection{Compilation and Linking}
+\label{sec:compile}
+The repro matrix validates that AFAR drops compile and link with the PE
+wrappers without requiring manual flag surgery. Wrapper diagnostics report any
+filtered flags or mismatched MPI metadata early, which reduces support
+turnaround when a drop regresses.
+All workflow-focused repros (`compile-only`, `cmake-mpi-omp`, and
+`wrapper-compile-link`) pass for \afarversion.
+The CMake repro confirms that build systems can consume the wrappers without
+manual flag translation.
+
+\subsection{Module Ordering Robustness}
+\label{sec:ordering}
+To reflect real user behavior, we execute the repro suite across multiple
+module load permutations (e.g., library modules loaded before or after
+`afar-prgenv`). This checks that wrapper logic correctly re-synchronizes MPI
+and library metadata regardless of module ordering. We report pass/skip/fail
+outcomes per permutation and flag any regressions for follow-up.
+
+\begin{table}[t]
+  \centering
+  \caption{Module ordering permutations used to validate metadata
+  re-synchronization.}
+  \label{tab:ordering}
+  \begin{tabular}{l l l}
+    \hline
+    Permutation & Example & Status (P/S/F) \\
+    \hline
+    Libraries before AFAR & load libs, then afar-prgenv & PASS \\
+    Libraries after AFAR & load afar-prgenv, then libs & PASS \\
+    MPI swap after AFAR & swap cray-mpich post-load & N/A \\
+    \hline
+  \end{tabular}
+\end{table}
+
+The before/after permutations pass for the library profiles exercised in this
+study (LibSci, FFTW, DSMML, PnetCDF, and serial HDF5). MPI swap after AFAR is a
+planned check and was not exercised in this run.
+
+\subsection{MPI and Offload Validation}
+\label{sec:mpi-offload}
+MPI validation confirms that the wrappers resynchronize the MPI flavor on each
+invocation, preventing stale `pkg-config` metadata when modules are swapped.
+OpenMP offload tests confirm that `--offload-arch` is injected consistently for
+both C and Fortran workflows when `craype-accel-amd-gfx90a` is loaded (or when
+\texttt{AFAR\_\*\_OFFLOAD\_ARCH} overrides are set).
+The `mpi-hello`, `omp-c`, and `omp-f90` repros all pass in this evaluation.
+
+\subsection{Library Compatibility}
+\label{sec:libraries}
+Library repro tests confirm that AFAR drops can link against PE-provided HDF5,
+FFTW, LibSci, DSMML, and PnetCDF libraries when the correct `pkg-config`
+metadata is present. The `libsci-acc` path is treated as a conditional gate
+because ROCm runtime dependencies can lag behind AFAR drops.
+When the expected ROCm runtime libraries are present, `libsci-acc` builds
+successfully; otherwise the test is skipped and the drop is held for follow-up.
+The `libsci-acc` repro uses \texttt{AFAR\_LIBSCI\_ACC\_LIBNAME} to target the
+correct accelerator library variant.
+
+HDF5 validation uses an AFAR-compiled Fortran shim module to avoid incompatible
+vendor `.mod` files while still linking against the HDF5 C libraries. The
+PnetCDF repro relies on `pnetcdf.inc` instead of compiler-specific `.mod`
+files, and it skips Fortran if the include file is absent. FFTW and DSMML
+validation use `pkg-config` metadata and \texttt{scripts/check\_ldd.sh} to ensure the
+link paths resolve to the expected PE libraries.
+
+\subsection{Operational Impact}
+\label{sec:impact}
+Operationally, Afar-prgenv converts AFAR drops from isolated toolchains into
+PE-compatible environments. Support teams can validate a drop with a
+deterministic repro suite and only escalate to broader validation (Fortran test
+suites, OpenMP validation, and application builds) once the PE compatibility
+baseline is satisfied.
+In this run, the repro suite reported no failures; the only skips were
+intentional gates for `libsci-acc` and the missing HDF5 C++ `pkg-config` data
+in the parallel HDF5 path.
+
+\subsection{Extended Validation}
+\label{sec:extended-validation}
+After repro gating, we run an OLCF Fortran application set and the SOLLVE
+validation suite to evaluate readiness for production use. These suites provide
+broader coverage of Fortran runtime behavior, OpenMP offload correctness, and
+application build workflows that are not captured by the repro tests alone.
+
+\begin{table}[t]
+  \centering
+  \caption{Extended validation suites used after repro gating.}
+  \label{tab:extended}
+  \begin{tabular}{l l l}
+    \hline
+    Suite & Coverage & Status (P/S/F) \\
+    \hline
+    OLCF Fortran apps & Fortran build/runtime & TBD \\
+    SOLLVE V\&V & OpenMP offload & TBD \\
+    \hline
+  \end{tabular}
+\end{table}

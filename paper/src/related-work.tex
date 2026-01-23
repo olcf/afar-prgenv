@@ -1,0 +1,14 @@
+\section{Related Work}
+\label{sec:related}
+Module systems such as Lmod underpin most HPC software stacks, and package
+managers like Spack and EasyBuild automate dependency resolution and software
+installation. These tools are essential for building and distributing software,
+but they do not address PE-specific wrapper semantics or MPI metadata coupling
+that Cray/HPE systems rely on.
+
+Compiler wrapper techniques are widely used to inject site defaults or
+architecture flags, yet they typically assume a single compiler stack rather
+than a layered environment that overlays experimental toolchains onto a
+production PE. Afar-prgenv complements these approaches by focusing on the
+user-support problem of early compiler evaluation in a production PE, with an
+emphasis on preserving the `ftn/cc/CC` contract and vendor library integration.

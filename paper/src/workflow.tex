@@ -1,0 +1,45 @@
+\section{Operational Workflow}
+\label{sec:workflow}
+This section describes how support teams deploy Afar-prgenv and how users
+interact with it during early drop evaluation.
+
+\begin{figure}[t]
+  \centering
+  \input{src/fig-workflow}
+  \caption{Monthly AFAR drop workflow. Afar-prgenv provides a repeatable path
+  from drop ingestion to user readiness.}
+  \label{fig:workflow}
+\end{figure}
+
+\subsection{Support Team Workflow}
+\label{sec:support-workflow}
+Support staff add a new AFAR drop under the configured root, update the version
+mapping, and regenerate the module tree using
+\texttt{afar\_modules/scripts/generate\_afar\_modules.sh}. They then run the repro test suite
+via \texttt{scripts/run\_afar\_tests.sh --keep-going} and capture logs for validation.
+A drop is considered ready for user evaluation when the repro matrix passes
+and the wrapper diagnostics show stable MPI and library metadata.
+The harness writes per-profile logs under \texttt{logs/}, which serve as
+support artifacts for regression tracking.
+
+After repro gating, support staff run extended validation suites, including an
+OLCF Fortran application set and the SOLLVE validation suite, to assess
+production readiness beyond basic compile and link coverage.
+
+\subsection{User Workflow}
+\label{sec:user-workflow}
+Users follow the standard PE module sequence (e.g., `cpe/\peversion`,
+`PrgEnv-amd/\prgenvversion`) and then load `afar-prgenv/\afarversion`. The
+wrappers preserve the expected compile and link commands while injecting AFAR
+paths and offload flags when needed.
+
+\subsection{Failure Modes and Diagnostics}
+\label{sec:diagnostics}
+Common failure modes include missing or mismatched MPI metadata, incompatible
+Fortran module files from vendor libraries, and absent ROCm runtime libraries.
+Wrapper diagnostics surface these issues early by reporting filtered flags,
+active MPI flavors, and updated \texttt{PKG\_CONFIG\_PATH} settings.
+
+The repro harness also exercises different module load orders to ensure that
+the wrappers re-synchronize MPI and library metadata correctly when users load
+modules before or after `afar-prgenv`.

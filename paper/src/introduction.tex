@@ -1,1 +1,28 @@
-Afar-prgenv intro...
+\section{Introduction}
+\label{sec:intro}
+Cray/HPE systems provide a stable programming environment (PE) that couples
+compilers, MPI, and optimized libraries behind consistent `ftn/cc/CC` wrappers.
+This stability is essential for production workloads, but it slows adoption of
+new compiler drops from AMD, particularly when the Cray PE does not yet ship
+the corresponding toolchain. Support teams and early adopters are left with a
+choice: wait for vendor integration or accept a fragmented environment that
+cannot interoperate with PE libraries and tooling.
+
+Afar-prgenv closes this gap. It overlays AMD AFAR compiler and ROCm drops into
+the Cray PE module hierarchy while preserving the PE contract that users and
+build systems depend on. The overlay provides wrapper logic for OpenMP offload,
+MPI metadata re-synchronization, and pkg-config shims that keep library flags
+stable even when modules are swapped. The result is a workflow where new drops
+can be tested monthly without breaking production tooling, and without requiring
+users to abandon the PE conventions they rely on.
+
+\subsection{Contributions}
+\label{sec:contrib}
+\begin{itemize}
+  \item Define the user-support problem for early compiler evaluation on
+  Cray/HPE systems and motivate the need for a safe, reversible overlay.
+  \item Present the Afar-prgenv design and implementation, including its module
+  hierarchy, wrapper behavior, and pkg-config integration.
+  \item Evaluate Afar-prgenv on Frontier with representative compile, link,
+  and offload workflows, and report operational outcomes for support teams.
+\end{itemize}

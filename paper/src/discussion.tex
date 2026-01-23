@@ -1,0 +1,34 @@
+\section{Discussion}
+\label{sec:discussion}
+We discuss the trade-offs of the overlay approach, portability to other Cray/HPE
+systems, and limitations observed during validation.
+
+\subsection{Limitations}
+\label{sec:limitations}
+The overlay depends on PE wrappers and module hierarchy conventions; changes in
+those interfaces require updates to Afar-prgenv. Some vendor libraries ship
+Fortran modules that are not compatible with AFAR compilers and require shims
+or local builds. Accelerator libraries (e.g., `libsci-acc`) may also lag when
+runtime dependencies are tied to older ROCm versions.
+Parallel HDF5 validation can also be constrained by missing C++ `pkg-config`
+metadata in the PE environment, which must be addressed before full coverage.
+
+We also intentionally avoid performance benchmarking in this work. Our goal is
+functional readiness and compatibility; performance evaluation is deferred
+until after a drop passes the compatibility gate.
+
+\subsection{Portability}
+\label{sec:portability}
+Afar-prgenv generalizes to other Cray/HPE systems because it leverages the same
+PE module hierarchy and wrappers. The system-specific configuration is limited
+to the AFAR root path, version mappings, and the Cray MPICH install path, all
+of which are captured in configuration files.
+
+\subsection{Lessons Learned}
+\label{sec:lessons}
+Two operational lessons stand out. First, early drop readiness is mostly a
+metadata problem: wrapper semantics and `pkg-config` paths must be correct
+before any application testing can succeed. Second, reproducible repro tests
+are critical for support teams because they isolate regressions to specific
+libraries or wrapper behaviors. These lessons inform how we prioritize future
+automation and validation.

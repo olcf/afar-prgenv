@@ -1,0 +1,63 @@
+\section{Experimental Setup}
+\label{sec:setup}
+We evaluate Afar-prgenv on Frontier using the current Cray PE and the latest
+AFAR drop available in the system module tree. The goal is to measure
+compatibility with the PE toolchain and key libraries, not peak performance.
+
+\subsection{Systems and Software}
+\label{sec:systems}
+Our baseline environment loads `cpe/\peversion` and `PrgEnv-amd/\prgenvversion`
+alongside `rocm/\afarrocm` and `amd/\afarrocm`. Afar-prgenv modules are provided
+from `/sw/crusher/ums/compilers/modulefiles/`, and the evaluation targets
+`afar-prgenv/\afarversion`. This setup mirrors the site-recommended module
+sequence used by the support team.
+
+Although the AFAR drop ships a ROCm runtime, the additional `rocm/\afarrocm`
+module is retained for compatibility with PE libraries that still depend on
+system ROCm paths. When evaluating older dependencies, we also verify
+compatibility against ROCm 6.x where needed.
+The repro harness focuses on PE and AFAR modules; ROCm compatibility for
+legacy dependencies is tracked as a separate gate (e.g., `libsci-acc`).
+
+\begin{verbatim}
+module purge
+module reset
+module load cpe/\peversion
+module load rocm/\afarrocm
+module load amd/\afarrocm
+module load PrgEnv-amd
+module load cray-mpich/9.0.1
+module load craype-x86-trento
+module load craype-accel-amd-gfx90a
+module use /sw/crusher/ums/compilers/modulefiles/
+module load afar-prgenv/\afarversion
+\end{verbatim}
+
+\subsection{Workloads and Repro Cases}
+\label{sec:workloads}
+We use the repository repro suite to validate compile and link correctness:
+`compile-only`, `cmake-mpi-omp`, `wrapper-compile-link`, `mpi-hello`, `omp-c`,
+`omp-f90`, `libsci`, `libsci-acc`, `hdf5`, `fftw`, `dsmml`, and `netcdf`. The
+tests exercise the PE wrappers, MPI module files, and library metadata via
+`pkg-config`, and \texttt{scripts/check\_ldd.sh} validates the resulting binaries.
+The CMake repro requires \texttt{cmake} in \texttt{PATH}.
+
+The repro harness (\texttt{scripts/run\_afar\_tests.sh}) runs profiles that load each
+library module both before and after `afar-prgenv`, ensuring the wrapper
+re-synchronization logic works under module-order permutations.
+
+In this study we ran:
+\begin{verbatim}
+scripts/run_afar_tests.sh --keep-going \
+  --afar-version \afarversion \
+  --afar-module afar-prgenv/\afarversion
+\end{verbatim}
+
+\subsection{Metrics}
+\label{sec:metrics}
+The primary metric is functional readiness: all repro cases must compile and
+link with the PE wrappers and AFAR drop. Secondary metrics include the
+diagnostic completeness of wrapper logs, pass/skip/fail rates per test, and the
+time to validate a new drop. We also track module-order robustness by running
+the repro suite under multiple module load permutations to ensure metadata
+re-synchronization remains correct.

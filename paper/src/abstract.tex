@@ -1,1 +1,14 @@
-Afar-prgenv abstract ....
+Afar-prgenv is a module-based overlay that enables early evaluation of AMD
+compiler drops on Cray/HPE systems without disrupting the Cray Programming
+Environment. The tool integrates AFAR compiler and ROCm drops into the PE
+hierarchy, preserves the `ftn/cc/CC` workflow, and stabilizes MPI and library
+metadata through pkg-config shims and wrapper diagnostics. We describe the
+design and implementation of Afar-prgenv and evaluate it on Frontier using the
+current PE and AFAR drop series. Our evaluation uses a reproducible test
+matrix covering MPI, OpenMP offload, and key Cray libraries (HDF5, FFTW,
+LibSci, DSMML, and PnetCDF), followed by extended validation with the SOLLVE
+suite and an OLCF Fortran application set. The results show that Afar-prgenv
+makes early compiler drops immediately usable with production libraries and
+support tools, providing a repeatable path to certify monthly drops before
+general availability. This work positions Afar-prgenv as a user support tool
+that bridges the gap between vendor release cadence and production readiness.

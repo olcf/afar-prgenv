@@ -51,6 +51,15 @@
   \providecommand\BibTeX{{%
     Bib\TeX}}}
 
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta, positioning}
+
+% Paper-scoped version macros for reproducibility.
+\newcommand{\afarversion}{22.3.0-10004}
+\newcommand{\afarrocm}{7.0.2}
+\newcommand{\peversion}{25.09}
+\newcommand{\prgenvversion}{8.6.0}
+
 %% Rights management information.  This information is sent to you
 %% when you complete the rights form.  These commands have SAMPLE
 %% values in them; it is your responsibility as an author to replace
@@ -61,7 +70,7 @@
 % \acmYear{2018}
 % \acmDOI{XXXXXXX.XXXXXXX}
 %% These commands are for a PROCEEDINGS abstract or paper.
-\acmConference[CUG '26]{The Cray User Group Annual Meeting}{April 26--30, 2026}{Nice, France}
+\acmConference[HUST '25]{12th International Workshop on HPC User Support Tools (SC25)}{November 16, 2025}{St. Louis, MO, USA}
 %%
 %%  Uncomment \acmBooktitle if the title of the proceedings is different
 %%  from ``Proceedings of ...''!
@@ -201,9 +210,17 @@
 
 \maketitle
 
-\section{Introduction}
-\label{sec:intro}
 \input{src/introduction}
+\input{src/motivation}
+\input{src/background}
+\input{src/related-work}
+\input{src/design}
+\input{src/implementation}
+\input{src/workflow}
+\input{src/experimental-setup}
+\input{src/evaluation}
+\input{src/discussion}
+\input{src/conclusion}
 
 \begin{acks}
 Please add

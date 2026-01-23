@@ -1,0 +1,56 @@
+\section{Architecture and Implementation}
+\label{sec:implementation}
+Afar-prgenv integrates AMD compiler drops into the Cray PE by providing a
+module hierarchy and lightweight wrapper logic. The overlay is intentionally
+minimal: it avoids replacing the PE and instead augments it with AFAR-specific
+paths, metadata, and diagnostics.
+
+\begin{figure}[t]
+  \centering
+  \input{src/fig-architecture}
+  \caption{Afar-prgenv overlay architecture. The Cray PE remains the primary
+  interface; Afar-prgenv inserts AFAR compilers and ROCm while preserving PE
+  wrapper semantics and library metadata.}
+  \label{fig:architecture}
+\end{figure}
+
+\subsection{Module Hierarchy}
+\label{sec:modules}
+The module tree is split into a meta module (`afar-prgenv/<ver>`) and two
+component modules: `afar-rocm/<ver>` and `afar-amd/<ver>`. The meta module
+unloads conflicting vendor modules, then loads the ROCm toolkit module followed
+by the compiler module to ensure the compilers are last in `PATH`. This keeps
+the Cray PE wrappers stable while redirecting the underlying toolchain.
+
+\subsection{Compiler Wrappers}
+\label{sec:wrappers}
+Afar-prgenv ships `ftn`, `cc`, and `CC` wrappers that preserve Cray PE behavior
+while injecting AFAR-specific fixes. The wrappers:
+\begin{itemize}
+  \item Resolve the real Cray compiler driver and delegate to it.
+  \item Inject `--offload-arch` when `-fopenmp` is present and no offload arch
+  is explicitly specified.
+  \item Re-synchronize MPI metadata at invocation time to match the active
+  `cray-mpich` module.
+  \item Filter or replace incompatible flags using a configurable rule set.
+\end{itemize}
+
+\subsection{pkg-config Integration}
+\label{sec:pkgconfig}
+MPI and vendor libraries depend on consistent `pkg-config` metadata. The
+generator produces AFAR-specific `.pc` files for MPI and ROCm, while a shim
+generator captures module-provided metadata for Cray libraries that do not ship
+usable `.pc` files. The wrappers mirror the PE-specific metadata path into
+\texttt{PKG\_CONFIG\_PATH} to keep build systems stable under module swaps.
+When required ROCm 6 runtime libraries are missing, the AFAR ROCm module
+suppresses Cray MPICH GTL `pkg-config` variables to avoid injecting
+incompatible link flags. This keeps MPI builds functional while signaling that
+accelerator-enabled MPI paths need follow-up validation.
+
+\subsection{Generation and Configuration}
+\label{sec:generator}
+Version mappings and PE paths are defined in configuration files and are
+regenerated with a single script. This keeps the module tree reproducible and
+aligns the AFAR drop version with the ROCm toolkit and MPI metadata used in
+tests. The generator also writes diagnostics that the support team uses to
+track drop readiness over time.

@@ -68,6 +68,15 @@ If `AFAR_PKGCONFIG_SHIM_DIR` is set, the wrappers append it to
 that do not ship pkg-config files) to be discovered without overriding
 vendor-provided `.pc` files.
 
+By default the wrappers also regenerate shims automatically when the module
+environment changes. This keeps builds working regardless of whether a library
+module is loaded before or after `afar-prgenv`.
+
+Disable the automatic refresh:
+```
+export AFAR_PKGCONFIG_SHIM_AUTO=0
+```
+
 ## Wrapper Filter and Mapping
 Wrappers can ignore or replace arguments based on a single filter file. This is
 useful when you want to drop or translate flags injected by build systems.

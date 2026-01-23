@@ -102,6 +102,10 @@ afar_modules/scripts/generate_pkgconfig_shims.sh
 The wrappers append `AFAR_PKGCONFIG_SHIM_DIR` to `PKG_CONFIG_PATH`, so the
 shims are used only when vendor `.pc` files are missing.
 
+The wrappers also refresh shims automatically when the module environment
+changes, so library modules can be loaded before or after `afar-prgenv` without
+breaking builds. Set `AFAR_PKGCONFIG_SHIM_AUTO=0` to disable this behavior.
+
 ## MPICH Flavor Validation
 Cray MPICH 8.x:
 ```

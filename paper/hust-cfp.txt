@@ -1,0 +1,129 @@
+HUST 2025
+12th International Workshop on HPC User Support Tools
+
+Held in conjunction with Supercomputing: The International Conference for High Performance Computing, Networking, Storage and Analysis.
+Overview
+Supercomputing centers exist to drive scientific discovery by supporting researchers in computational science fields. To make users more productive in the complex HPC environment, HPC centers employ user support teams. These teams serve many roles, from setting up accounts, to consulting on math libraries and code optimization, to managing HPC software stacks. Often, support teams struggle to adequately support scientists. HPC environments are extremely complex, and combined with the complexity of multi-user installations, exotic hardware, and maintaining research software, supporting HPC users can be extremely demanding.
+
+With the twelfth HUST workshop, we will continue to provide a necessary forum for system administrators, user support team members, tool developers, policy makers and end users. We will provide a forum to discuss support issues and we will provide a publication venue for current support developments. Best practices, user support tools, and any ideas to streamline user support at supercomputing centers are in scope.
+
+Our workshop is scheduled on Sunday, Nov 16, 2:00 – 5:30pm CT in St. Louis, MO USA as part of the SC25 conference.
+Join the discussions on HUST Community Slack
+
+
+Participate in the HUST Community Survey
+
+
+Contact: Elsa Gonsiorowski
+
+Program
+HUST25 Workshop Program
+HUST25 will be an in-person workshop as part of SC25, please join us in St. Louis! Speakers and participants are reminded to adhere to the SC code of conduct.
+
+Sunday, November 16, 2025
+2:00pm CST
+
+HUST Welcome & Introduction (1 minute)
+Workshop organizers: Chris Bording, Elsa Gonsiorowski, Lev Gorenstein, Aaron Jezghani, Ilya Zhukov
+2:00pm-2:20pm CST
+
+A Modular, Responsive, and Accessible HPC Dashboard Built upon Open OnDemand
+Richie Tan, Guangzhen Jin
+2:20pm-2:40pm CST
+
+Open Composer: A Web-Based Application for Generating and Managing Batch Jobs on HPC Clusters
+Masahiro Nakao, Keiji Yamamoto
+2:40pm-3:00pm CST
+
+Is it an HPC Workflow Assistant? Is it a Framework? It’s Drona Workflow Engine
+Andrii Kryvenko, Duy Pham, Marinus Pennings, Honggao Liu
+3:00pm-3:30pm CST
+
+Afternoon Break
+3:30pm-3:50pm CST
+
+Generating Frequently Asked Questions from Technical Support Tickets using Large Language Models
+Christina Joslin, David Burns, FNU Ashish, Elham Sarbijan
+3:50pm-4:10pm CST
+
+AskHPC: A ChatBot for High Performance Computing User Support
+Akhilesh Bondapalli, Huihuo Zheng, Oluwaseun T. Ajayi, Murat Keceli, Haritha Siddabathuni Som, Beth Cerny, Taylor Childers, Lisa Childers, Yasaman Ghadar, Michael Papka, Venkatram Vishwanath, Rong Ge
+4:10pm-4:30pm CST
+
+HUST Community Survey
+Elsa Gonsiorowski
+4:30pm-4:50pm CST
+
+ModuLair: Streamlining Python Virtual Environment Management for HPC
+Surada Suwansathit, Ananya Adiki, Gabriel Floreslovo, Marinus Pennings, Honggao Liu
+4:50pm-5:10pm CST
+
+Dori: User Centered HPC for Data Intensive Computing
+Georg Rath
+5:10pm-5:20pm CST
+
+Job Script Portability Tool: Cat-based Localization Scheme (CLS)
+Craig Steffen
+5:20pm-5:30pm CST
+
+AnvilOps: Increasing Accessibility of Kubernetes with Automated Builds and Deployments
+Brendan Swanson, Emma Zheng, LJ Lumas, Haniye Kashgarani
+Topics
+Topics of interest include, but are not limited to:
+Topics of interest include, but are not limited to:
+
+Defining and customising the user environment
+Software tools for system testing and monitoring
+Software build and installation tools
+Tools and frameworks for using system performance analysis tools
+Workflow and pipeline tools
+Collaborative development tools
+Novel HPC environments: cloud, support for containers
+Storage tools and strategies for efficient use
+Supporting Hadoop and Spark clusters for Big Data
+ML, AI, and other Data Analysis workflows
+Establishing baseline configuration efforts for HPC
+Software tools for system testing and monitoring
+Supporting complex HPC environments, e.g., hardware heterogeneity
+Documentation: creating, maintaining and auto-updating
+Submission
+We invite authors to submit original, high-quality work with sufficient background material to be clear to the HPC community.
+
+Format
+All submissions should be made electronically through the SC25 Submissions website. Papers should be submitted as PDF file using the ACM proceedings two-column template (sigconf option for LaTeX users). Camera-ready production will be handled by TAPS. We kindly refer authors to the necessary templates.
+
+Submissions must be double blind, i.e., authors should remove their names, institutions or hints found in references to earlier work. When discussing past work, they need to refer to themselves in the third person, as if they were discussing another researcher’s work. Furthermore, authors must identify any conflict of interest with the PC chair or PC members.
+
+We are accepting:
+
+Full papers, 5-12 pages including figures, tables, and references. Full papers will be included in the published proceedings.
+Short papers, 2-4 pages including figures, tables, and references Short papers will not be included in the published proceedings.
+ Click here to submit.
+
+Dates
+Important Dates
+Submissions Open: June 27, 2025
+Submissions Deadline: August 11, 2025 August 4, 2025
+Acceptance notifications: September 5, 2025
+Camera-ready papers: September 29, 2025
+Workshop: November 16, 2025
+Committees
+Organizing Committee
+Chris Bording, The University of Western Australia, Australia
+Elsa Gonsiorowski, Lawrence Livermore National Laboratory, USA
+Lev Gorenstein, Globus // University of Chicago, USA
+Aaron Jezghani, Georgia Institute of Technology, USA
+Ilya Zhukov, Jülich Supercomputing Centre, Germany
+Program Committee
+Francesco Bongiovanni, LuxProvide, Luxembourg
+Brad Crawford, Georgia Institute of Technology, USA
+Max Hawkins, Georgia Institute of Technology, USA
+Guangzhen Jin, Purdue University, USA
+Vasileios Karakasis, NVIDIA, Switzerland
+Paul Kolano, Tesla, USA
+Geoffrey Lentner, Purdue University, USA
+Deepa Phanish, Georgia Institute of Technology, USA
+William Powell, Georgia Institute of Technology, USA
+Todd Raeker, University of Michigan, USA
+Gaurav Saxena, Barcelona Supercomputing Center, Spain
+Nannan Shan, Purdue University, USA

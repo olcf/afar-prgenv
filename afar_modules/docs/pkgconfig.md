@@ -70,6 +70,20 @@ The script writes shims under `afar_modules/pkgconfig/shims/<AFAR_VERSION>` and
 prints that directory. The wrappers append `AFAR_PKGCONFIG_SHIM_DIR` to
 `PKG_CONFIG_PATH`, so shims are discovered without overriding vendor files.
 
+## Automatic shim refresh
+The wrappers can regenerate shim files automatically, which keeps builds
+working regardless of whether a library module is loaded before or after
+`afar-prgenv`. When `AFAR_PKGCONFIG_SHIM_AUTO` is unset or set to `1`, the
+wrappers compute a key from the active module environment and rerun
+`generate_pkgconfig_shims.sh` whenever that key changes.
+
+To disable the automatic refresh:
+```
+export AFAR_PKGCONFIG_SHIM_AUTO=0
+```
+
+The last computed key is stored in `AFAR_PKGCONFIG_SHIM_KEY` for diagnostics.
+
 ## How to debug pkg-config
 Useful checks:
 ```

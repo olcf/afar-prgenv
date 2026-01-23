@@ -17,6 +17,20 @@ prepend_env_path() {
   fi
 }
 
+append_env_path() {
+  local var="$1"
+  local dir="$2"
+  local val="${!var:-}"
+  case ":${val}:" in
+    *":${dir}:"*) return 0 ;;
+  esac
+  if [[ -n "${val}" ]]; then
+    export "${var}=${val}:${dir}"
+  else
+    export "${var}=${dir}"
+  fi
+}
+
 trim_line() {
   local line="$1"
   line="${line#"${line%%[![:space:]]*}"}"
@@ -24,21 +38,9 @@ trim_line() {
   printf '%s' "${line}"
 }
 
-UNSUPPORTED_PATTERNS=()
 FILTER_ACTIONS=()
 FILTER_PATTERNS=()
 FILTER_REPLACEMENTS=()
-
-load_unsupported_patterns() {
-  local file="$1"
-  [[ -f "${file}" ]] || return 0
-  while IFS= read -r line || [[ -n "${line}" ]]; do
-    line="${line%%#*}"
-    line="$(trim_line "${line}")"
-    [[ -z "${line}" ]] && continue
-    UNSUPPORTED_PATTERNS+=("${line}")
-  done < "${file}"
-}
 
 load_filter_rules() {
   local file="$1"
@@ -62,16 +64,11 @@ load_filter_rules() {
   done < "${file}"
 }
 
-match_unsupported_pattern() {
-  local arg="$1"
-  local pat
-  for pat in "${UNSUPPORTED_PATTERNS[@]}"; do
-    if [[ "${arg}" == ${pat} ]]; then
-      printf '%s' "${pat}"
-      return 0
-    fi
-  done
-  return 1
+wrapper_warn() {
+  if [[ "${AFAR_WRAPPER_QUIET:-}" == "1" ]]; then
+    return 0
+  fi
+  echo "$@" >&2
 }
 
 apply_wrapper_filter() {
@@ -79,43 +76,32 @@ apply_wrapper_filter() {
   local filtered=()
   local arg
   for arg in "${args[@]}"; do
-    if [[ "${arg}" == "-dynamic" ]]; then
-      echo "AFAR wrapper: ignored -dynamic (built-in)" >&2
-      continue
-    fi
-    local unsupported=""
-    unsupported="$(match_unsupported_pattern "${arg}" || true)"
     local action=""
     local replacement=""
+    local pattern=""
     local i
     for i in "${!FILTER_ACTIONS[@]}"; do
       if [[ "${arg}" == ${FILTER_PATTERNS[$i]} ]]; then
         action="${FILTER_ACTIONS[$i]}"
         replacement="${FILTER_REPLACEMENTS[$i]}"
+        pattern="${FILTER_PATTERNS[$i]}"
         break
       fi
     done
 
-    if [[ -n "${unsupported}" ]]; then
-      if [[ "${action}" == "ignore" ]]; then
-        echo "AFAR wrapper: unsupported flag ignored via filter: ${arg} (pattern ${unsupported})" >&2
-      elif [[ "${action}" == "replace" ]]; then
-        echo "AFAR wrapper: unsupported flag replaced via filter: ${arg} -> ${replacement} (pattern ${unsupported})" >&2
-      else
-        echo "AFAR wrapper: unsupported flag: ${arg} (pattern ${unsupported}). Add to AFAR_WRAPPER_FILTER to ignore/replace." >&2
-      fi
-    fi
-
     if [[ "${action}" == "ignore" ]]; then
+      wrapper_warn "AFAR wrapper: ignored flag via filter: ${arg} (pattern ${pattern})"
       continue
     elif [[ "${action}" == "replace" ]]; then
+      wrapper_warn "AFAR wrapper: replaced flag via filter: ${arg} -> ${replacement} (pattern ${pattern})"
       if [[ -n "${replacement}" ]]; then
         read -r -a rep_args <<< "${replacement}"
         filtered+=("${rep_args[@]}")
       fi
-    else
-      filtered+=("${arg}")
+      continue
     fi
+
+    filtered+=("${arg}")
   done
 
   set -- "${filtered[@]}"
@@ -162,24 +148,128 @@ apply_mpich_pkgconfig_override() {
   mirror_fixed_pkgconfig
 }
 
+fix_libsci_acc_pkgconfig() {
+  local libsci_acc_prefix="${CRAY_LIBSCI_ACC_PREFIX_DIR:-}"
+  local pkg_libs="${PE_PKGCONFIG_LIBS:-}"
+  local pkg_products="${PE_PKGCONFIG_PRODUCTS:-}"
+  if [[ -z "${libsci_acc_prefix}" && "${pkg_libs}" != *"libsci_acc"* && "${pkg_products}" != *"PE_LIBSCI_ACC"* ]]; then
+    return 0
+  fi
+  local vars="${PE_LIBSCI_ACC_PKGCONFIG_VARIABLES:-}"
+  local target="${PE_LIBSCI_ACC_TARGET:-}"
+  if [[ -z "${target}" ]]; then
+    local offload="${AFAR_FTN_OFFLOAD_ARCH:-}"
+    if [[ -n "${offload}" ]]; then
+      target="${offload}"
+      export PE_LIBSCI_ACC_TARGET="${offload}"
+    fi
+  fi
+  if [[ -z "${vars}" || -z "${target}" ]]; then
+    return 0
+  fi
+  local prgenv="${PE_LIBSCI_ACC_PRGENV:-}"
+  if [[ -z "${prgenv}" ]]; then
+    local pe_env="${PE_ENV:-}"
+    if [[ -z "${pe_env}" ]]; then
+      pe_env="amd"
+    else
+      pe_env="${pe_env,,}"
+    fi
+    prgenv="${pe_env}"
+    export PE_LIBSCI_ACC_PRGENV="${prgenv}"
+  fi
+  local updated="${vars}"
+  if [[ "${updated}" == *"@prgenv@"* && -n "${prgenv}" ]]; then
+    updated="${updated//@prgenv@/${prgenv}}"
+  fi
+  if [[ "${updated}" == *"@accelerator@"* ]]; then
+    local accel="${target}"
+    if [[ "${target}" == gfx* ]]; then
+      accel="amd_${target}"
+    fi
+    updated="${updated//@accelerator@/${accel}}"
+  fi
+  if [[ "${updated}" != "${vars}" ]]; then
+    export PE_LIBSCI_ACC_PKGCONFIG_VARIABLES="${updated}"
+  fi
+}
+
+apply_pkgconfig_shim_dir() {
+  local shim="${AFAR_PKGCONFIG_SHIM_DIR:-}"
+  [[ -n "${shim}" ]] || return 0
+  append_env_path PKG_CONFIG_PATH "${shim}"
+}
+
+maybe_generate_pkgconfig_shims() {
+  local auto="${AFAR_PKGCONFIG_SHIM_AUTO:-1}"
+  if [[ "${auto}" == "0" ]]; then
+    return 0
+  fi
+  local shim_script="${wrapper_dir}/../scripts/generate_pkgconfig_shims.sh"
+  [[ -x "${shim_script}" ]] || return 0
+  local key
+  key="$(printf '%s|' \
+    "${AFAR_VERSION:-}" \
+    "${CRAY_MPICH_VERSION:-}" \
+    "${PE_PKGCONFIG_PRODUCTS:-}" \
+    "${PE_PKGCONFIG_LIBS:-}" \
+    "${PE_FORTRAN_PKGCONFIG_LIBS:-}" \
+    "${PE_CXX_PKGCONFIG_LIBS:-}" \
+    "${CRAY_HDF5_DIR:-}" \
+    "${CRAY_HDF5_PARALLEL_DIR:-}" \
+    "${CRAY_HDF5_PREFIX:-}" \
+    "${CRAY_HDF5_PARALLEL_PREFIX:-}" \
+    "${CRAY_FFTW_PREFIX:-}" \
+    "${FFTW_ROOT:-}" \
+    "${CRAY_DSMML_PREFIX:-}" \
+    "${CRAY_DSMML_DIR:-}" \
+    "${CRAY_PARALLEL_NETCDF_PREFIX:-}" \
+    "${CRAY_PARALLEL_NETCDF_DIR:-}" \
+    "${PNETCDF_DIR:-}" \
+    "${CRAY_LIBSCI_PREFIX_DIR:-}" \
+    "${CRAY_LIBSCI_ACC_PREFIX_DIR:-}" \
+    "${PE_LIBSCI_PKGCONFIG_VARIABLES:-}" \
+    "${PE_LIBSCI_ACC_PKGCONFIG_VARIABLES:-}" \
+    "${PE_HDF5_PKGCONFIG_LIBS:-}" \
+    "${PE_HDF5_PARALLEL_PKGCONFIG_LIBS:-}" \
+    "${PE_PARALLEL_NETCDF_PKGCONFIG_LIBS:-}" \
+    "${PE_DSMML_PKGCONFIG_LIBS:-}" \
+    "${PE_FFTW_PKGCONFIG_LIBS:-}" \
+    "${AFAR_PKGCONFIG_SHIM_DIR:-}")
+  if [[ "${key}" == "${AFAR_PKGCONFIG_SHIM_KEY:-}" ]]; then
+    return 0
+  fi
+  local shim_dir
+  shim_dir="$("${shim_script}")" || return 0
+  [[ -n "${shim_dir}" ]] || return 0
+  export AFAR_PKGCONFIG_SHIM_DIR="${shim_dir}"
+  export AFAR_PKGCONFIG_SHIM_KEY="${key}"
+}
+
 apply_mpich_pkgconfig_override
+fix_libsci_acc_pkgconfig
+maybe_generate_pkgconfig_shims
+apply_pkgconfig_shim_dir
 
 filter_file="${AFAR_WRAPPER_FILTER:-${wrapper_dir}/../config/wrapper-filter.txt}"
-unsupported_file="${AFAR_WRAPPER_UNSUPPORTED:-${wrapper_dir}/../config/wrapper-unsupported-flags.txt}"
-load_unsupported_patterns "${unsupported_file}"
+extra_filter="${AFAR_WRAPPER_FILTER_EXTRA:-${AFAR_WRAPPER_FILTER_LOCAL:-}}"
 load_filter_rules "${filter_file}"
-if [[ -z "${AFAR_WRAPPER_FILTER_LOGGED:-}" ]]; then
+if [[ -n "${extra_filter}" ]]; then
+  load_filter_rules "${extra_filter}"
+fi
+if [[ "${AFAR_WRAPPER_DEBUG:-}" == "1" ]]; then
   if [[ -f "${filter_file}" ]]; then
-    echo "AFAR wrapper: loaded filter file ${filter_file}" >&2
+    echo "AFAR wrapper debug: filter file ${filter_file}" >&2
   else
-    echo "AFAR wrapper: filter file not found ${filter_file}" >&2
+    echo "AFAR wrapper debug: filter file not found ${filter_file}" >&2
   fi
-  if [[ -f "${unsupported_file}" ]]; then
-    echo "AFAR wrapper: loaded unsupported flag file ${unsupported_file}" >&2
-  else
-    echo "AFAR wrapper: unsupported flag file not found ${unsupported_file}" >&2
+  if [[ -n "${extra_filter}" ]]; then
+    if [[ -f "${extra_filter}" ]]; then
+      echo "AFAR wrapper debug: extra filter file ${extra_filter}" >&2
+    else
+      echo "AFAR wrapper debug: extra filter file not found ${extra_filter}" >&2
+    fi
   fi
-  export AFAR_WRAPPER_FILTER_LOGGED=1
 fi
 
 mapfile -d '' -t filtered_args < <(apply_wrapper_filter "$@")
@@ -231,6 +321,7 @@ if [[ -n "${offload_arch}" ]]; then
     set -- "$@" "--offload-arch=${offload_arch}"
   fi
 fi
+
 
 if [[ "${CRAYPE_LINK_TYPE:-}" == "dynamic" ]]; then
   unset CRAYPE_LINK_TYPE

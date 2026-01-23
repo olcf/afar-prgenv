@@ -92,6 +92,10 @@ afar_modules/scripts/generate_pkgconfig_shims.sh
 
 For background on `.pc` files and `PKG_CONFIG_PATH`, see `docs/pkgconfig.md`.
 
+The wrappers also refresh shims automatically when `AFAR_PKGCONFIG_SHIM_AUTO`
+is enabled; the runner still generates them once per profile to keep results
+consistent.
+
 ## Logs
 Logs are written to `logs/<timestamp>-<profile>.log`. They are intentionally
 untracked (see `logs/.gitignore`) so you can keep run history locally.

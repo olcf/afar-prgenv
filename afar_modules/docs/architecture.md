@@ -66,6 +66,10 @@ shim generator creates local `.pc` files from the loaded module environment:
 The shim directory is exported as `AFAR_PKGCONFIG_SHIM_DIR` and appended to
 `PKG_CONFIG_PATH` by the wrappers.
 
+The wrappers can also regenerate shims automatically when the module
+environment changes, which keeps builds order-independent (library modules can
+be loaded before or after `afar-prgenv`).
+
 ## Offload Arch Handling
 - `craype-accel-amd-gfx90a` sets `CRAY_ACCEL_TARGET=amd_gfx90a`.
 - `afar-amd` clears `CRAY_ACCEL_TARGET` and `CRAY_ACCEL_VENDOR` to avoid

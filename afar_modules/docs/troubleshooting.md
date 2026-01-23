@@ -95,6 +95,8 @@ Fixes:
 - Generate AFAR shims from the module environment:
   `afar_modules/scripts/generate_pkgconfig_shims.sh`
 - Ensure `AFAR_PKGCONFIG_SHIM_DIR` is appended to `PKG_CONFIG_PATH`.
+- Ensure `AFAR_PKGCONFIG_SHIM_AUTO` is not set to `0` if you rely on
+  automatic refresh when modules are loaded after `afar-prgenv`.
 
 ### mpichf90.pc not found
 Symptoms:

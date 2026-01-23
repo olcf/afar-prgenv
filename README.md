@@ -2,6 +2,8 @@
 
 [![Paper](https://img.shields.io/badge/paper-PDF-blue)](paper/afar-prgenv.pdf) [![Docs](https://img.shields.io/badge/docs-afar__modules%2Fdocs-brightgreen)](afar_modules/docs/documentation-plan.md)
 
+<img src="assets/readme/afar_prgenv.png" alt="AFAR PrgEnv overview" width="100%">
+
 This repository provides a relocatable Lmod module tree for AFAR compiler +
 ROCm drops on Frontier. The tree is designed to be copied into a site
 modulepath with only a root path update and regeneration.

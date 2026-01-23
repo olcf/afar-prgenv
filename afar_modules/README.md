@@ -8,19 +8,25 @@ modulepath with only a root path update and regeneration.
 1) Add the modulepath:
    `module use /path/to/afar_modules/modulefiles`
 2) Load a compatible programming environment:
+   `module load cpe/25.09`
    `module load PrgEnv-amd`
-3) Load an AFAR drop:
+3) Load MPI and targets:
+   `module load cray-mpich/9.0.1`
+   `module load craype-x86-trento`
+   `module load craype-accel-amd-gfx90a`
+4) Load an AFAR drop:
    `module load afar-prgenv/22.2.0-8873`
-4) Verify wrapper behavior:
+5) Verify wrapper behavior:
    `ftn --version`
    `cc --version`
-5) Verify MPICH flavor selection:
+6) Verify MPICH flavor selection:
    `echo "$CRAY_MPICH_VERSION"`
    `echo "$AFAR_MPICH_FLAVOR"`
    `pkg-config --cflags mpichf90`
 
 ## Documentation Map
 - `docs/user-guide.md`: day-to-day usage, build examples, and runtime checks.
+- `docs/pkgconfig.md`: `pkg-config` primer, `.pc` format, and AFAR shims.
 - `docs/architecture.md`: how the AFAR modules, wrappers, and pkg-config glue fit together.
 - `docs/mpich.md`: Cray MPICH 8.x vs 9.x integration, mpichf90.pc layout, and validation.
 - `docs/wrappers.md`: ftn/cc/CC wrapper behavior, offload arch injection, and overrides.
@@ -43,10 +49,12 @@ afar_modules/
 
 ## Maintenance Checklist (Short)
 - Add new drops and regenerate: `docs/module-generation.md`
+- Run the test harness (`scripts/run_afar_tests.sh --keep-going`); logs live in `logs/` and are untracked.
 - Keep MPICH 8.x/9.x mapping current: `docs/mpich.md`
 - Verify wrapper behavior after changes: `docs/wrappers.md`
 - Update admin-facing steps after PE/ROCm changes: `docs/admin-handoff.md`
 - Refresh examples and tests: `docs/troubleshooting.md`
+- Review pkg-config shims when library modules change: `docs/pkgconfig.md`
 
 ## Notes
 - Use `.modules` in this workspace for the known-good module sequence.

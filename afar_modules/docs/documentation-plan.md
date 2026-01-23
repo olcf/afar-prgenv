@@ -6,6 +6,7 @@ wrapper behavior evolve.
 ## Document Set (Recommended)
 - `README.md`: entry point and doc map.
 - `docs/user-guide.md`: user workflows and build examples.
+- `docs/pkgconfig.md`: `pkg-config` primer, `.pc` format, and shims.
 - `docs/architecture.md`: module load and runtime architecture.
 - `docs/module-generation.md`: generator inputs, outputs, and update steps.
 - `docs/wrappers.md`: wrapper behavior and environment overrides.
@@ -19,7 +20,9 @@ Update docs whenever:
 - A new AFAR drop is added (update user guide examples and module generation).
 - Cray MPICH major changes (update mpich mapping and tests).
 - Wrapper behavior changes (update wrappers and architecture docs).
+- Test harness or repro changes (update testing and troubleshooting docs).
 - ROCm runtime layout changes (update fallback guidance).
+- Library module changes affect `.pc` metadata or shims (update pkgconfig doc).
 
 ## Best Practices
 - Single source of truth: describe behavior in generator/wrappers, not in
@@ -43,3 +46,4 @@ Update docs whenever:
 - Does `docs/mpich.md` match the current MPICH major mapping?
 - Do wrappers docs match `bin/ftn`, `bin/cc`, `bin/CC` behavior?
 - Do troubleshooting steps mention the latest common failures?
+- Are pkg-config changes reflected in `docs/pkgconfig.md`?

@@ -3,6 +3,8 @@
 This document explains how AFAR modules support both Cray MPICH 8.x and 9.x,
 and how the correct MPI module files and pkg-config entries are selected.
 
+For background on `.pc` files and `pkg-config`, see `docs/pkgconfig.md`.
+
 ## MPICH Flavor Mapping
 Cray MPICH versions map to different MPI module file layouts:
 - Cray MPICH 8.x -> `include/mpich3.4a2`
@@ -33,7 +35,7 @@ regenerate.
 ## Validation Steps
 Cray MPICH 8.x:
 ```
-module load cray-mpich/8.1.33
+module load cray-mpich/8.1.31
 echo "$CRAY_MPICH_VERSION"     # 8.x
 echo "$AFAR_MPICH_FLAVOR"      # mpich3.4a2
 pkg-config --cflags mpichf90   # includes .../include/mpich3.4a2
@@ -51,7 +53,7 @@ pkg-config --cflags mpichf90   # includes .../include/mpich4.3.1
 If you swap MPICH after AFAR:
 ```
 module load afar-prgenv/<ver>
-module swap cray-mpich/8.1.33 cray-mpich/9.0.1
+module swap cray-mpich/8.1.31 cray-mpich/9.0.1
 ftn -fopenmp hello.f90 -o hello
 ```
 The wrapper re-syncs the flavor for the build.

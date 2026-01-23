@@ -35,6 +35,17 @@ module tree on Frontier.
    pkg-config --cflags mpichf90
    ```
 
+## Test Harness
+- Run `scripts/run_afar_tests.sh --keep-going` after updates.
+- Logs are written under `logs/` and intentionally untracked (see `logs/.gitignore`).
+- `scripts/check_ldd.sh` allows `/opt/rocm-7.0.2` because MPI runtimes may pull it.
+
+## pkg-config Notes
+- The generator creates `mpichf90.pc` and `rocm-afar-<ver>.pc` files.
+- Local shim `.pc` files are generated at runtime by
+  `scripts/generate_pkgconfig_shims.sh` using the module environment.
+- For background and manual maintenance guidance, see `docs/pkgconfig.md`.
+
 ## Cray MPICH 8.x vs 9.x
 - Cray MPICH 8.x needs `include/mpich3.4a2` from the AFAR drop.
 - Cray MPICH 9.x needs `include/mpich4.3.1`.
@@ -51,6 +62,7 @@ update the site documentation and consider setting `AFAR_LLVM_LIB_DIR`.
 - `config/afar-versions.txt`
 - `.modules` (workspace guidance)
 - `docs/mpich.md` and `docs/troubleshooting.md` (examples and tests)
+- `docs/pkgconfig.md` (pkg-config baseline or shim behavior)
 
 ## Handoff Notes
 - Generated modulefiles live under `modulefiles/`. Avoid editing them directly.

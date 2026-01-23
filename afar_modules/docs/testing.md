@@ -4,9 +4,10 @@ This document covers the local test harness used to validate `afar-prgenv`
 across multiple module stacks and libraries.
 
 ## Test Layout
-Repro cases live under `repro/` at the workspace root. Each test has:
-- `README.md`
-- `build.sh`
+Testing-related workspace directories:
+- `repro/`: repro cases (each has `README.md` and `build.sh`).
+- `scripts/`: test runner and helper scripts (including `scripts/run_afar_tests.sh`).
+- `logs/`: test logs (untracked).
 
 Build outputs go under `build/<profile>` inside each repro directory.
 

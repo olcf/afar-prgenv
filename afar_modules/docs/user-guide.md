@@ -7,12 +7,14 @@ building programs, and verifying GPU offload.
 Use the workspace `.modules` when available. A typical sequence is:
 ```
 module purge
+module reset
+source /opt/cray/pe/cpe/25.09/restore_lmod_system_defaults.sh
 module load cpe/25.09
-module use /path/to/afar_modules/modulefiles
 module load PrgEnv-amd
 module load cray-mpich/9.0.1
 module load craype-x86-trento
 module load craype-accel-amd-gfx90a
+module use /path/to/afar_modules/modulefiles
 module load afar-prgenv/22.2.0-8873
 ```
 

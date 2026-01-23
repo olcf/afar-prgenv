@@ -98,7 +98,7 @@ To override:
 - `AFAR_PGMATH_DIR=/path/to/llvm/lib`
 
 ## Maintenance Checklist
-- Update `.modules` to keep AFAR and ROCm versions paired.
+- Update `.modules` to keep AFAR and PE/MPICH versions paired.
 - Update `config/afar-versions.txt` when new drops appear.
 - Update `config/cray-mpich-dir.txt` when Cray MPICH paths change.
 - Re-run the generator and validate with a small compile test.

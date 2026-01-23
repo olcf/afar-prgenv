@@ -43,13 +43,19 @@ modulepath with only a root path update and regeneration.
 
 ## Repository Layout (High Level)
 ```
-afar_modules/
+assets/         # README images and overview graphics
+afar_modules/   # AFAR module tree (modulefiles, wrappers, pkg-config)
   bin/            # compiler wrapper scripts (ftn/cc/CC)
   config/         # AFAR root + version mapping + Cray MPICH libdir
   docs/           # detailed documentation
   modulefiles/    # generated Lmod modulefiles
   pkgconfig/      # generated pkg-config files
   scripts/        # generator scripts
+logs/           # test logs (untracked)
+paper/          # paper sources and PDF
+repro/          # repro cases for the test harness
+scripts/        # test harness and helper scripts
+.modules        # known-good module sequence (workspace)
 ```
 
 ## Maintenance Checklist (Short)
@@ -63,7 +69,7 @@ afar_modules/
 
 ## Notes
 - Use `.modules` in this workspace for the known-good module sequence.
-- If ROCm/AMD versions change, update `.modules` to keep them paired.
+- If PE/MPICH or AFAR versions change, update `.modules` to keep the sequence current.
 - Regenerate modulefiles after AFAR drop or MPICH path changes:
   `afar_modules/scripts/generate_afar_modules.sh`
 

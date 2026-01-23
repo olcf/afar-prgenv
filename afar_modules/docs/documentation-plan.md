@@ -14,6 +14,7 @@ wrapper behavior evolve.
 - [docs/troubleshooting.md](troubleshooting.md): diagnostics and example tests.
 - [docs/testing.md](testing.md): test harness and repro layout.
 - [docs/admin-handoff.md](admin-handoff.md): admin checklist for deployment and updates.
+- [../../paper/afar-prgenv.pdf](../../paper/afar-prgenv.pdf): AFAR module paper (PDF).
 
 ## Update Triggers
 Update docs whenever:

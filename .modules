@@ -1,8 +1,25 @@
 module purge
 module reset
-module load rocm/7.0.2
-module load amd/7.0.2
+source /opt/cray/pe/cpe/25.09/restore_lmod_system_defaults.sh
+
+# Base PE and toolchain
+module load cpe/25.09
 module load PrgEnv-amd
-module use /sw/crusher/ums/compilers/modulefiles/
-# module load afar/22.2.0-8873
+module load cray-mpich/9.0.1
+module load craype-x86-trento
+module load craype-accel-amd-gfx90a
+
+# Local AFAR module tree
+module use /autofs/nccs-svm1_home2/oscarh/co/flang/afar_modules/modulefiles
+module load afar-prgenv/22.2.0-8873
+
+# Optional library modules for tests
+# module load cray-libsci
+# module load cray-fftw
+# module load cray-hdf5-parallel
+# module load cray-hdf5
+# module load cray-parallel-netcdf
+# module load cray-dsmml
+# module load cray-libsci_acc
+
 module list

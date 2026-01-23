@@ -4,7 +4,7 @@ This plan keeps AFAR module docs maintainable as new drops, PE versions, and
 wrapper behavior evolve.
 
 ## Document Set (Recommended)
-- `README.md`: entry point and doc map.
+- `../../README.md`: entry point and doc map.
 - `docs/user-guide.md`: user workflows and build examples.
 - `docs/pkgconfig.md`: `pkg-config` primer, `.pc` format, and shims.
 - `docs/architecture.md`: module load and runtime architecture.
@@ -39,7 +39,7 @@ Update docs whenever:
 1) Make code or module changes.
 2) Update the relevant doc(s) based on the change type.
 3) Run a quick sanity build to validate any example command snippets.
-4) Keep the doc map in `README.md` in sync with new files.
+4) Keep the doc map in `../../README.md` in sync with new files.
 
 ## Doc Review Checklist
 - Are example module versions updated?

@@ -1,6 +1,6 @@
 # AFAR Module Tree (Local)
 
-This directory provides a relocatable Lmod module tree for AFAR compiler +
+This repository provides a relocatable Lmod module tree for AFAR compiler +
 ROCm drops on Frontier. The tree is designed to be copied into a site
 modulepath with only a root path update and regeneration.
 
@@ -25,16 +25,16 @@ modulepath with only a root path update and regeneration.
    `pkg-config --cflags mpichf90`
 
 ## Documentation Map
-- `docs/user-guide.md`: day-to-day usage, build examples, and runtime checks.
-- `docs/pkgconfig.md`: `pkg-config` primer, `.pc` format, and AFAR shims.
-- `docs/architecture.md`: how the AFAR modules, wrappers, and pkg-config glue fit together.
-- `docs/mpich.md`: Cray MPICH 8.x vs 9.x integration, mpichf90.pc layout, and validation.
-- `docs/wrappers.md`: ftn/cc/CC wrapper behavior, offload arch injection, and overrides.
-- `docs/module-generation.md`: generating modulefiles, adding new AFAR drops, and config inputs.
-- `docs/troubleshooting.md`: common issues and diagnostics.
-- `docs/testing.md`: local test harness and repro layout.
-- `docs/admin-handoff.md`: site admin checklist for deployment and updates.
-- `docs/documentation-plan.md`: documentation maintenance plan and best practices.
+- `afar_modules/docs/user-guide.md`: day-to-day usage, build examples, and runtime checks.
+- `afar_modules/docs/pkgconfig.md`: `pkg-config` primer, `.pc` format, and AFAR shims.
+- `afar_modules/docs/architecture.md`: how the AFAR modules, wrappers, and pkg-config glue fit together.
+- `afar_modules/docs/mpich.md`: Cray MPICH 8.x vs 9.x integration, mpichf90.pc layout, and validation.
+- `afar_modules/docs/wrappers.md`: ftn/cc/CC wrapper behavior, offload arch injection, and overrides.
+- `afar_modules/docs/module-generation.md`: generating modulefiles, adding new AFAR drops, and config inputs.
+- `afar_modules/docs/troubleshooting.md`: common issues and diagnostics.
+- `afar_modules/docs/testing.md`: local test harness and repro layout.
+- `afar_modules/docs/admin-handoff.md`: site admin checklist for deployment and updates.
+- `afar_modules/docs/documentation-plan.md`: documentation maintenance plan and best practices.
 
 ## Repository Layout (High Level)
 ```
@@ -48,13 +48,13 @@ afar_modules/
 ```
 
 ## Maintenance Checklist (Short)
-- Add new drops and regenerate: `docs/module-generation.md`
+- Add new drops and regenerate: `afar_modules/docs/module-generation.md`
 - Run the test harness (`scripts/run_afar_tests.sh --keep-going`); logs live in `logs/` and are untracked.
-- Keep MPICH 8.x/9.x mapping current: `docs/mpich.md`
-- Verify wrapper behavior after changes: `docs/wrappers.md`
-- Update admin-facing steps after PE/ROCm changes: `docs/admin-handoff.md`
-- Refresh examples and tests: `docs/troubleshooting.md`
-- Review pkg-config shims when library modules change: `docs/pkgconfig.md`
+- Keep MPICH 8.x/9.x mapping current: `afar_modules/docs/mpich.md`
+- Verify wrapper behavior after changes: `afar_modules/docs/wrappers.md`
+- Update admin-facing steps after PE/ROCm changes: `afar_modules/docs/admin-handoff.md`
+- Refresh examples and tests: `afar_modules/docs/troubleshooting.md`
+- Review pkg-config shims when library modules change: `afar_modules/docs/pkgconfig.md`
 
 ## Notes
 - Use `.modules` in this workspace for the known-good module sequence.

@@ -1,0 +1,19 @@
+\begin{tikzpicture}[
+    box/.style={draw, rounded corners=2pt, align=center, text width=2.4cm, minimum height=0.85cm},
+    arrow/.style={-Latex, thick},
+    font=\small
+  ]
+  \node[box] (pe) {Cray PE modules\\(cpe/PrgEnv/MPICH)};
+  \node[box, right=1.1cm of pe] (fixed) {PE\_AMD\_FIXED\\\_PKGCONFIG\_PATH};
+  \node[box, right=1.1cm of fixed] (wrap) {Afar-prgenv\\wrappers};
+  \node[box, right=1.1cm of wrap] (pkg) {PKG\_CONFIG\_PATH};
+  \node[box, right=1.1cm of pkg] (build) {pkg-config\\and builds};
+
+  \node[box, below=1.2cm of wrap] (shim) {Shim \texttt{.pc} files\\(\texttt{AFAR\_PKGCONFIG\_}\allowbreak\texttt{SHIM\_DIR})};
+
+  \draw[arrow] (pe) -- (fixed);
+  \draw[arrow] (fixed) -- (wrap);
+  \draw[arrow] (wrap) -- (pkg);
+  \draw[arrow] (pkg) -- (build);
+  \draw[arrow] (shim) -- (wrap);
+\end{tikzpicture}

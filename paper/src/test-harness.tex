@@ -1,0 +1,62 @@
+\section{Repro Harness and Test Inventory}
+\label{sec:harness}
+This section details the repro harness used to gate AFAR drops and the catalog
+of tests that exercise PE wrapper, MPI, OpenMP, and library integration.
+
+\subsection{Harness Architecture}
+\label{sec:harness-arch}
+The repro harness is driven by \texttt{scripts/run\_afar\_tests.sh}. It defines
+named profiles that extend a baseline PE stack with a specific library module
+and then runs every repro under that profile. By default, the harness loads
+each library module both before and after \texttt{afar-prgenv} to validate
+module-order independence. The ordering can be restricted with
+\texttt{--lib-order before|after|both} when a focused regression is needed.
+
+Profiles can be overridden by environment variables so support teams can
+validate alternate PE versions or modulepaths without editing the scripts.
+Common overrides include \texttt{AFAR\_TEST\_CPE}, \texttt{AFAR\_TEST\_MPICH},
+and \texttt{AFAR\_TEST\_MODULEPATH}. The harness also supports targeted
+execution through \texttt{--profiles} and \texttt{--keep-going}, enabling
+incremental validation when a drop is known to have a single regression.
+
+\subsection{Repro Case Catalog}
+\label{sec:harness-catalog}
+\begin{table*}[t]
+  \centering
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \caption{Repro cases and their validation focus.}
+  \label{tab:repro-catalog}
+  \begin{tabular}{l p{0.24\textwidth} p{0.55\textwidth}}
+    \hline
+    Repro & Focus & Requirements/Notes \\
+    \hline
+    compile-only & Fortran compiler sanity & AFAR `ftn`; no link step. \\
+    cmake-mpi-omp & CMake wrapper pass-through & CMake in \texttt{PATH}; uses `ftn` and `cc`. \\
+    wrapper-compile-link & Wrapper compile/link split & Uses \texttt{scripts/check\_ldd.sh} on outputs. \\
+    mpi-hello & MPI module integration & Requires \texttt{cray-mpich}; \texttt{AFAR\_TEST\_RUN\_MPI} enables runtime. \\
+    omp-c & OpenMP offload (C) & Requires \texttt{craype-accel-}\allowbreak\texttt{amd-gfx90a} or \texttt{AFAR\_CC\_OFFLOAD\_ARCH}. \\
+    omp-f90 & OpenMP offload (Fortran) & Requires \texttt{craype-accel-}\allowbreak\texttt{amd-gfx90a} or \texttt{AFAR\_FTN\_OFFLOAD\_ARCH}. \\
+    libsci & LibSci links & Uses \texttt{pkg-config libsci}. \\
+    libsci-acc & LibSci accelerator links & Uses \texttt{AFAR\_LIBSCI\_ACC\_LIBNAME}; skipped if ROCm 6 deps missing. \\
+    hdf5 & HDF5 serial/parallel & Uses AFAR-compiled Fortran shim; requires `pkg-config hdf5`. \\
+    fftw & FFTW bindings & Uses \texttt{pkg-config fftw3}. \\
+    dsmml & DSMML bindings & Uses \texttt{pkg-config dsmml}. \\
+    netcdf & PnetCDF bindings & Uses `pnetcdf.inc`; skips Fortran if include is missing. \\
+    \hline
+  \end{tabular}
+\end{table*}
+
+The catalog emphasizes compatibility with PE metadata rather than numerical
+performance. Every repro compiles and links via `ftn/cc/CC` to ensure wrapper
+semantics remain intact across profiles.
+
+\subsection{Logging and Diagnostics}
+\label{sec:harness-logs}
+Log files are written under \texttt{logs/} and include a timestamp plus profile
+suffix (for example, \texttt{20240320-base.log}); the location can be
+overridden with \texttt{AFAR\_TEST\_LOG\_DIR}. These logs
+capture wrapper warnings, `pkg-config` paths, and linker diagnostics that
+support teams use to triage regressions. For deeper debugging, the wrappers
+support \texttt{AFAR\_WRAPPER\_DEBUG} to emit the final argument list passed to
+the underlying Cray PE drivers.

@@ -1,0 +1,87 @@
+\section{Readiness Reporting and Operations}
+\label{sec:operations}
+Afar-prgenv turns monthly AFAR drops into auditable support artifacts. The
+repro harness emits per-profile logs, and the P/S/F outcomes are summarized in
+readiness reports that track drop stability across time. This operational view
+is important for user support because it distinguishes regressions introduced
+by new drops from persistent gaps in the PE ecosystem.
+
+Readiness reports capture the AFAR drop ID, PE version, ROCm version, and a
+summary of PASS/SKIP/FAIL counts, plus the explicit reason for each SKIP. This
+keeps dependency gaps visible (for example, missing ROCm 6 runtime libraries
+or incomplete `pkg-config` metadata) while allowing early adopters to
+experiment with drops that otherwise meet functional readiness criteria.
+
+\subsection{Readiness Labels}
+\label{sec:labels}
+Each repro outcome is classified as PASS, SKIP, or FAIL. PASS indicates that
+the workflow compiles and links with the PE wrappers and required libraries.
+SKIP indicates a known precondition is missing (for example, a runtime
+dependency or missing metadata) and is treated as a gate rather than a
+regression. FAIL indicates a functional break in the drop or wrapper layer and
+blocks progression to extended validation.
+
+\begin{table}[t]
+  \centering
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \caption{Readiness labels and operational response.}
+  \label{tab:labels}
+  \begin{tabular}{l p{0.62\columnwidth}}
+    \hline
+    Label & Operational response \\
+    \hline
+    PASS & Proceed to extended validation and user-facing evaluation. \\
+    SKIP & Document precondition, track dependency, rerun when resolved. \\
+    FAIL & Block release; isolate regression and update wrapper or metadata. \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\subsection{Readiness Report Contents}
+\label{sec:report}
+Each drop evaluation produces a short readiness report that captures the
+module stack, test coverage, and gating outcomes used in the decision. The
+report format is intentionally lightweight so it can be generated monthly and
+shared with operations staff.
+
+\begin{table}[t]
+  \centering
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \caption{Core fields in a readiness report.}
+  \label{tab:report-fields}
+  \begin{tabular}{l p{0.62\columnwidth}}
+    \hline
+    Field & Purpose \\
+    \hline
+    AFAR drop version & Track the compiler/toolchain drop under evaluation. \\
+    PE module stack & Record \texttt{cpe}, \texttt{PrgEnv}, MPI, and targets. \\
+    ROCm version(s) & Capture primary ROCm and legacy dependencies. \\
+    Repro coverage & List profiles and module-order permutations executed. \\
+    P/S/F summary & Summarize readiness outcomes plus explicit SKIP causes. \\
+    LDD audit status & Note dependency allowlist results for binaries. \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\subsection{Cadence and Regression Tracking}
+\label{sec:cadence}
+AFAR drops arrive on a rapid cadence, so readiness reporting emphasizes
+repeatability. The generator logs, repro outputs, and module versions are
+captured together so that support teams can compare a new drop against the last
+known-good baseline. This makes it easier to attribute regressions to a change
+in compiler behavior versus a change in PE library metadata.
+
+Because the reports are structured, we can trend the pass rate across drops
+and flag persistent SKIP causes that should be addressed by PE library updates
+or wrapper fixes. Over time, this reduces the time to certify each monthly
+drop and clarifies which regressions are actionable by the support team.
+
+\subsection{From Repro Gating to User Rollout}
+\label{sec:rollout}
+Once the repro suite passes and known SKIP conditions are documented, support
+teams can stage the drop for early adopters. Additional validation suites
+(SOLLVE V\&V and the OLCF Fortran applications) are used to confirm readiness
+for broader user adoption, but the repro gate remains the minimum requirement
+for publishing a drop in the site module tree.

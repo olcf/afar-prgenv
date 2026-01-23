@@ -8,6 +8,7 @@ cmake-build-*/
 .DS_Store
 __pycache__/
 r
+r*
 AGENTS.md
 paper/*.aux
 paper/*.bbl

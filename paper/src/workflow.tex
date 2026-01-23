@@ -8,10 +8,34 @@ interact with it during early drop evaluation.
   \input{src/fig-workflow}
   \caption{Monthly AFAR drop workflow. Afar-prgenv provides a repeatable path
   from drop ingestion to user readiness.}
-  \Description{Vertical workflow from AFAR drop ingestion through module
+  \Description{Horizontal workflow from AFAR drop ingestion through module
   generation, repro tests, validation suites, and user-ready release.}
   \label{fig:workflow}
 \end{figure*}
+
+\begin{table*}[t]
+  \centering
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \caption{Workflow stages, artifacts, and readiness gates.}
+  \label{tab:workflow-stages}
+  \begin{tabular}{p{0.18\textwidth} p{0.33\textwidth} p{0.40\textwidth}}
+    \hline
+    Stage & Inputs & Outputs/Gate \\
+    \hline
+    Drop ingestion & AFAR drop install, version mapping & Updated versions file,
+    regenerated module tree. \\
+    Module generation & Config files, MPICH paths & Modulefiles and
+    `pkg-config` metadata for AFAR and MPI. \\
+    Repro tests & Module stack, repro cases & P/S/F outcomes and logs; drop is
+    blocked on FAIL. \\
+    Validation suites & OLCF Fortran apps, SOLLVE V\&V & Broader functional
+    checks; results recorded for rollout. \\
+    User-ready release & PASS/SKIP gates and suite summaries & Module tree
+    staged for early adopters with readiness report. \\
+    \hline
+  \end{tabular}
+\end{table*}
 
 \subsection{Support Team Workflow}
 \label{sec:support-workflow}
@@ -23,6 +47,10 @@ A drop is considered ready for user evaluation when the repro matrix passes
 and the wrapper diagnostics show stable MPI and library metadata.
 The harness writes per-profile logs under \texttt{logs/}, which serve as
 support artifacts for regression tracking.
+These logs are paired with the generator output (modulefiles and `pkg-config`
+metadata) so each AFAR drop can be traced to the exact environment used for
+validation. This pairing allows support staff to hand off a drop with
+reproducible evidence of readiness rather than informal notes.
 
 When PE library modules do not provide usable `pkg-config` metadata, the
 support workflow also includes generating shim files via

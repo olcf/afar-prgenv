@@ -1,4 +1,6 @@
-# AFAR Module Tree (Local)
+# AFAR PrgEnv Module for Frontier
+
+[![Paper](https://img.shields.io/badge/paper-PDF-blue)](paper/afar-prgenv.pdf) [![Docs](https://img.shields.io/badge/docs-afar__modules%2Fdocs-brightgreen)](afar_modules/docs/documentation-plan.md)
 
 This repository provides a relocatable Lmod module tree for AFAR compiler +
 ROCm drops on Frontier. The tree is designed to be copied into a site
@@ -65,3 +67,13 @@ afar_modules/
 
 ## Paper
 - [paper/afar-prgenv.pdf](paper/afar-prgenv.pdf)
+
+## Citation
+```bibtex
+@misc{AfarPrgenv2025,
+  author = {Hernandez, Oscar and Elwasif, Wael},
+  title = {Afar-prgenv: A configurable programming environment for AMD AFAR drops on Cray HPE systems},
+  year = {2025},
+  note = {Internal tool used at OLCF Frontier}
+}
+```

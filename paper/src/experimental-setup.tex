@@ -54,6 +54,40 @@ scripts/run_afar_tests.sh --keep-going \
   --afar-module afar-prgenv/\afarversion
 \end{verbatim}
 
+The default profiles exercised by the harness are summarized in
+Table~\ref{tab:profiles}. Each profile extends the baseline module stack with a
+library module and its associated `pkg-config` metadata, enabling focused
+validation of PE libraries under AFAR.
+
+\begin{table}[t]
+  \centering
+  \small
+  \setlength{\tabcolsep}{3pt}
+  \caption{Default repro profiles and module extensions.}
+  \label{tab:profiles}
+  \begin{tabular}{l l l}
+    \hline
+    Profile & Module(s) & Purpose \\
+    \hline
+    base & --- & compiler/MPI/offload sanity \\
+    libsci & cray-libsci & BLAS/LAPACK links \\
+    libsci-acc & cray-libsci\_acc & accelerator libs \\
+    hdf5 & cray-hdf5-parallel & HDF5 parallel stack \\
+    hdf5-serial & cray-hdf5 & HDF5 serial stack \\
+    fftw & cray-fftw & FFTW bindings \\
+    dsmml & cray-dsmml & DSMML links \\
+    netcdf & cray-parallel-netcdf & PnetCDF stack \\
+    \hline
+  \end{tabular}
+\end{table}
+
+The harness can restrict module ordering with \texttt{--lib-order} and can
+limit profiles with \texttt{--profiles}. Environment overrides such as
+\texttt{AFAR\_TEST\_CPE} and \texttt{AFAR\_TEST\_MPICH} enable alternate PE
+combinations, while \texttt{AFAR\_TEST\_RUN} or \texttt{AFAR\_TEST\_RUN\_MPI}
+trigger runtime execution when nodes are available. These controls let support
+teams focus on regression hotspots without reworking individual repro scripts.
+
 \subsection{Metrics}
 \label{sec:metrics}
 The primary metric is functional readiness: all repro cases must compile and

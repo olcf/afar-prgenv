@@ -47,6 +47,27 @@ serial HDF5 path passes.
   \label{fig:repro-summary}
 \end{figure}
 
+Across the repro matrix, 11 of 13 tests pass, 2 are skipped, and none fail.
+Under our readiness policy, this qualifies the drop for extended validation
+because the skips correspond to known external dependencies rather than
+compiler regressions.
+
+\begin{table}[t]
+  \centering
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \caption{Skip causes observed in the \afarversion repro run.}
+  \label{tab:skip-causes}
+  \begin{tabular}{l p{0.62\columnwidth}}
+    \hline
+    Repro & SKIP cause \\
+    \hline
+    libsci-acc & ROCm 6 runtime dependencies missing for accelerator links. \\
+    hdf5-parallel & Missing HDF5 C++ pkg-config metadata for the PE module. \\
+    \hline
+  \end{tabular}
+\end{table}
+
 \subsection{Compilation and Linking}
 \label{sec:compile}
 The repro matrix validates that AFAR drops compile and link with the PE
@@ -57,6 +78,15 @@ All workflow-focused repros (`compile-only`, `cmake-mpi-omp`, and
 `wrapper-compile-link`) pass for \afarversion.
 The CMake repro confirms that build systems can consume the wrappers without
 manual flag translation.
+
+\subsection{Repro Harness Coverage}
+\label{sec:coverage}
+The harness runs each profile under multiple module-order permutations, which
+stress-test the wrapper logic that re-synchronizes `pkg-config` metadata at
+compile time. This ensures that users can load library modules either before
+or after `afar-prgenv` without breaking builds. In this evaluation, the base
+profile and all library profiles completed without failures; the only
+exceptions were the intentional skips noted in Table~\ref{tab:repro}.
 
 \subsection{Module Ordering Robustness}
 \label{sec:ordering}
@@ -110,11 +140,81 @@ The `libsci-acc` repro uses \texttt{AFAR\_LIBSCI\_ACC\_LIBNAME} to target the
 correct accelerator library variant.
 
 HDF5 validation uses an AFAR-compiled Fortran shim module to avoid incompatible
-vendor `.mod` files while still linking against the HDF5 C libraries. The
-PnetCDF repro relies on `pnetcdf.inc` instead of compiler-specific `.mod`
+vendor \texttt{.mod} files while still linking against the HDF5 C libraries. The
+PnetCDF repro relies on `pnetcdf.inc` instead of compiler-specific \texttt{.mod}
 files, and it skips Fortran if the include file is absent. FFTW and DSMML
 validation use `pkg-config` metadata and \texttt{scripts/check\_ldd.sh} to ensure the
 link paths resolve to the expected PE libraries.
+
+\subsection{Library Case Studies}
+\label{sec:case-studies}
+HDF5 highlights a common Fortran compatibility issue: vendor \texttt{.mod} files are
+compiler-specific and often incompatible with AFAR. The repro uses an
+AFAR-compiled shim module (\texttt{hdf5\_shim.f90}) so the Fortran build can
+consume the PE-provided HDF5 C libraries without ingesting incompatible \texttt{.mod}
+files. This pattern generalizes to other libraries that ship Fortran modules.
+
+LibSci-acc highlights runtime dependency drift. Cray accelerator libraries may
+link against ROCm 6 runtimes even when AFAR drops ship ROCm 7 toolchains. The
+repro detects missing ROCm 6 libraries and reports a SKIP rather than a hard
+FAIL, signaling a dependency gap rather than a compiler regression.
+
+PnetCDF highlights module metadata gaps. The repro uses the Fortran include
+\texttt{pnetcdf.}\allowbreak\texttt{inc} instead of compiler-specific module
+files and skips Fortran validation when the include is missing. This keeps
+the C/C++ checks active while isolating Fortran metadata gaps for follow-up.
+
+\subsection{Binary Dependency Audits}
+\label{sec:ldd}
+Most repros run \texttt{scripts/check\_ldd.sh} after linking to verify that
+library paths resolve to expected prefixes. The default allowlist includes PE
+paths under \texttt{/opt/cray}, AFAR roots, and standard system locations
+(e.g., \texttt{/lib*}, \texttt{/usr/lib*}), plus ROCm runtime paths required by
+MPI. This audit catches accidental leakage to incompatible system libraries
+and provides a fast signal for regressions introduced by a new drop.
+
+\subsection{Metadata and Shim Coverage}
+\label{sec:shims}
+Shim \texttt{.pc} files are generated per profile when PE libraries do not expose
+AFAR-compatible metadata. The wrappers append the shim directory to
+\texttt{PKG\_CONFIG\_PATH} and optionally refresh it when the module
+environment changes, which keeps library metadata stable even when users load
+modules out of order. In practice, this is most important for Fortran-facing
+libraries whose vendor `.pc` files omit module-specific include paths.
+
+\subsection{Diagnostic Signals}
+\label{sec:diagnostics-results}
+The evaluation also tracks common failure signatures that indicate a drop is
+not ready for broader validation. Examples include missing `pkg-config` data
+for a loaded library module, a mismatch between \texttt{CRAY\_MPICH\_VERSION}
+and the selected MPI flavor, and absent ROCm runtime dependencies for
+accelerator libraries. The wrapper warnings and the repro harness logs capture
+these cases early, enabling support teams to decide whether to regenerate
+metadata, adjust module ordering, or defer the drop until dependencies align.
+
+\begin{table}[t]
+  \centering
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \caption{Common failure signals and mitigations.}
+  \label{tab:failure-modes}
+  \begin{tabular}{p{0.38\columnwidth} p{0.52\columnwidth}}
+    \hline
+    Signal & Mitigation \\
+    \hline
+    Missing `pkg-config` metadata & Regenerate shim `.pc` files and
+    verify \texttt{PKG\_CONFIG\_PATH}. \\
+    Wrong MPICH flavor selected & Rebuild via wrappers or reload
+    \texttt{afar-prgenv} to resync \texttt{CRAY\_MPICH\_VERSION}. \\
+    OpenMP offload arch missing & Load
+    \texttt{craype-accel-}\allowbreak\texttt{amd-gfx90a} or set
+    \texttt{AFAR\_FTN\_OFFLOAD\_ARCH}. \\
+    LibSci-acc link fails & Check ROCm runtime deps or defer until matching
+    accelerator libs are available. \\
+    Incompatible Fortran \texttt{.mod} & Build AFAR-compatible shim modules. \\
+    \hline
+  \end{tabular}
+\end{table}
 
 \subsection{Operational Impact}
 \label{sec:impact}

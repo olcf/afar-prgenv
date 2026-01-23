@@ -17,12 +17,26 @@ We also intentionally avoid performance benchmarking in this work. Our goal is
 functional readiness and compatibility; performance evaluation is deferred
 until after a drop passes the compatibility gate.
 
+\subsection{Operational Scalability}
+\label{sec:scalability}
+The combination of a generator-driven module tree and a repro harness makes
+monthly AFAR drops tractable for support teams. Most updates are data-driven:
+adding a version mapping, regenerating modulefiles, and running the repro
+matrix. This workflow scales across multiple drops because the wrapper logic
+and `pkg-config` shims are shared, while version-specific differences are
+captured in configuration files and module metadata.
+
 \subsection{Portability}
 \label{sec:portability}
 Afar-prgenv generalizes to other Cray/HPE systems because it leverages the same
 PE module hierarchy and wrappers. The system-specific configuration is limited
 to the AFAR root path, version mappings, and the Cray MPICH install path, all
 of which are captured in configuration files.
+
+Portability is strongest when the target system follows standard Cray PE
+conventions for `ftn/cc/CC` and `pkg-config`. Sites with non-standard module
+layouts may need additional wrapper filter rules or shim metadata to preserve
+order independence.
 
 \subsection{Lessons Learned}
 \label{sec:lessons}

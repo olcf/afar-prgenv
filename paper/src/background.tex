@@ -13,6 +13,12 @@ wrappers, MPI integration, and library metadata. The wrappers embed PE-specific
 assumptions about flag handling and \texttt{PKG\_\allowbreak CONFIG\_PATH}
 (including the \texttt{PE\_AMD\_\allowbreak FIXED\_\allowbreak PKGCONFIG\_PATH}
 convention), and most build systems assume those semantics remain stable.
+The PE module hierarchy layers target modules (e.g.,
+\texttt{craype-x86-trento}, \texttt{craype-accel-amd-gfx90a}), MPI, and vendor
+libraries on top of the base compiler environment. This hierarchy is designed
+to keep wrapper behavior consistent even when users mix additional library
+modules or swap MPI implementations, which places a premium on stable metadata
+paths for `pkg-config` and compiler wrappers.
 
 \subsection{AMD Compiler and ROCm Drops}
 \label{sec:amd-drops}
@@ -28,6 +34,20 @@ At the time of this evaluation, the latest AFAR drop available on Frontier is
 While AFAR drops ship their own ROCm runtime, site workflows may still load a
 system ROCm module (such as `rocm/\afarrocm`) to satisfy dependencies of
 selected vendor libraries that lag behind the drop.
+AFAR drops also package MPI module files under versioned include directories
+(\texttt{include/mpich3.4a2} or \texttt{include/mpich4.3.1}) to match Cray MPICH
+8.x or 9.x layouts. Maintaining compatibility with these layouts is critical
+for Cray PE builds that rely on \texttt{pkg-config} to discover MPI module
+paths.
+
+\subsection{Metadata and pkg-config}
+\label{sec:pkgconfig-bg}
+Cray PE libraries expose their compile and link flags through `.pc` files
+consumed by `pkg-config`. Build systems rely on this metadata to resolve
+library search paths and include directories. Afar-prgenv relies on
+`pkg-config` to keep MPI and vendor library metadata aligned with AFAR
+compilers, and it uses shim `.pc` files when PE modules do not provide
+compatible metadata.
 
 \subsection{Frontier as a Target System}
 \label{sec:frontier}
@@ -38,3 +58,5 @@ recommended baseline for AFAR testing in this workspace loads
 \texttt{rocm/\allowbreak \afarrocm} and \texttt{amd/\allowbreak \afarrocm}
 alongside \texttt{PrgEnv-amd}, then adds the AFAR module tree from
 \texttt{/sw/crusher/ums/compilers/\allowbreak modulefiles/}.
+The target accelerator for offload testing is AMD GFX90a. We select it via the
+\texttt{craype-accel-}\allowbreak\texttt{amd-gfx90a} module in the PE stack.

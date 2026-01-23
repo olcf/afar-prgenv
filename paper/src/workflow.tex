@@ -24,9 +24,24 @@ and the wrapper diagnostics show stable MPI and library metadata.
 The harness writes per-profile logs under \texttt{logs/}, which serve as
 support artifacts for regression tracking.
 
+When PE library modules do not provide usable `pkg-config` metadata, the
+support workflow also includes generating shim files via
+\texttt{generate\_pkgconfig\_shims.sh}. This step can be
+triggered explicitly or left to the wrapper auto-refresh logic, but it is
+recorded in logs so that metadata changes are traceable during drop triage.
+
 After repro gating, support staff run extended validation suites, including an
 OLCF Fortran application set and the SOLLVE validation suite, to assess
 production readiness beyond basic compile and link coverage.
+
+\subsection{Admin Deployment}
+\label{sec:admin}
+For site deployment, the AFAR module tree (\texttt{modulefiles}, \texttt{bin},
+\texttt{pkgconfig}, and configuration files) is copied into a site modulepath.
+Admins ensure wrapper scripts are executable and add the module path via
+`module use`. Updates to AFAR drops or MPICH paths are performed by refreshing
+the version mapping and re-running the generator, followed by a smoke test
+(`ftn`, `pkg-config --cflags mpichf90`) to confirm wrapper and metadata health.
 
 \subsection{User Workflow}
 \label{sec:user-workflow}

@@ -15,6 +15,13 @@ libraries or interact with standard build systems that rely on
 In practice, this makes AFAR drops unusable for production users until a
 support tool like Afar-prgenv bridges the gap.
 
+The support burden is amplified by module ordering and metadata coupling.
+Users often load library modules before the compiler stack, and `pkg-config`
+metadata can become stale when MPI or PE libraries are swapped after a drop is
+loaded. These issues are easy to miss in ad hoc testing but cause immediate
+failures in user builds. Afar-prgenv is motivated by the need to make drop
+evaluation deterministic under real-world module ordering.
+
 \subsection{User Support Challenges}
 \label{sec:support-challenges}
 Support teams must bridge mismatched compiler/runtime versions, conflicting

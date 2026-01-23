@@ -1,14 +1,34 @@
 \section{Related Work}
 \label{sec:related}
-Module systems such as Lmod underpin most HPC software stacks, and package
-managers like Spack and EasyBuild automate dependency resolution and software
-installation. These tools are essential for building and distributing software,
-but they do not address PE-specific wrapper semantics or MPI metadata coupling
-that Cray/HPE systems rely on.
+Module systems such as Environment Modules and Lmod underpin most HPC software
+stacks by organizing compiler, MPI, and library families into hierarchical
+module trees.\cite{EnvModules2024,Lmod2011} Package managers like Spack and
+EasyBuild automate dependency resolution and software installation across
+large software stacks.\cite{Spack2015,EasyBuild2012} These tools are essential
+for building and distributing software, but they do not preserve PE-specific
+wrapper semantics or the MPI metadata coupling that Cray/HPE systems rely on.
 
-Compiler wrapper techniques are widely used to inject site defaults or
-architecture flags, yet they typically assume a single compiler stack rather
-than a layered environment that overlays experimental toolchains onto a
-production PE. Afar-prgenv complements these approaches by focusing on the
-user-support problem of early compiler evaluation in a production PE, with an
-emphasis on preserving the `ftn/cc/CC` contract and vendor library integration.
+Cray PE documentation emphasizes the role of `ftn/cc/CC` wrappers and PE
+metadata paths in maintaining portable build workflows across modules and
+targets.\cite{CrayPE2024} Compiler wrapper techniques are widely used to inject
+site defaults or architecture flags, yet they typically assume a single
+compiler stack rather than a layered environment that overlays experimental
+toolchains onto a production PE. Afar-prgenv complements these approaches by
+focusing on the user-support problem of early compiler evaluation in a
+production PE, with an emphasis on preserving the `ftn/cc/CC` contract and
+vendor library integration.
+
+Validation suites such as SOLLVE's OpenMP V\&V provide systematic coverage of
+OpenMP semantics and offload behavior,\cite{SOLLVE2020,OpenMP2024} and MPI
+implementations commonly ship their own test suites.\cite{MPICH2023} Afar-prgenv
+targets a different layer: the interoperability between vendor compiler drops,
+PE wrappers, and PE-provided libraries. Its repro suite prioritizes build and
+link correctness, while existing validation suites are used after the PE
+compatibility gate to assess functional readiness in application workflows.
+
+Finally, site operators often maintain ad hoc module overlays to stage
+experimental compilers, but these overlays typically bypass the Cray PE
+wrapper contract or require users to hand-curate library flags. Afar-prgenv
+formalizes that overlay into a reproducible, metadata-driven workflow that
+keeps the wrapper behavior intact while exposing the new toolchain to
+existing PE libraries and diagnostics.

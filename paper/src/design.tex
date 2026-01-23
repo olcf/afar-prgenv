@@ -12,6 +12,22 @@ wrappers and module semantics.
   \item Support rapid testing with clear diagnostics for support staff.
 \end{itemize}
 
+Beyond these goals, the design explicitly targets module-order independence and
+diagnostic completeness. Support teams need to reproduce user environments
+where libraries may be loaded before or after AFAR, so Afar-prgenv treats
+`pkg-config` metadata and wrapper state as dynamic rather than static at module
+load time.
+
+\subsection{Readiness Criteria}
+\label{sec:readiness}
+We define readiness as the ability to compile and link common MPI, OpenMP
+offload, and PE library workflows using the standard `ftn/cc/CC` wrappers.
+Repro tests are treated as gates: a drop is considered ready for broader
+validation only after the repro suite reports PASS for core workflows and
+explicitly documents any SKIP conditions. This gating model prioritizes
+correctness and compatibility before any performance tuning or application
+regression testing.
+
 \subsection{Non-Goals}
 \label{sec:nongoals}
 We do not replace the Cray PE or provide a new package manager. Instead, we

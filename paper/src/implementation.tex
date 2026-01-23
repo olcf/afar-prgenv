@@ -40,6 +40,56 @@ while injecting AFAR-specific fixes. The wrappers:
   \item Filter or replace incompatible flags using a configurable rule set.
 \end{itemize}
 
+\begin{table}[t]
+  \centering
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \caption{Selected Afar-prgenv environment overrides.}
+  \label{tab:env-overrides}
+  \begin{tabular}{l l}
+    \hline
+    Variable & Purpose \\
+    \hline
+    \texttt{AFAR\_REAL\_FTN} & Override real PE `ftn` path \\
+    \texttt{AFAR\_REAL\_CC} & Override real PE `cc` path \\
+    \texttt{AFAR\_REAL\_CXX} & Override real PE `CC` path \\
+    \texttt{AFAR\_FTN\_OFFLOAD\_ARCH} & Force Fortran offload arch \\
+    \texttt{AFAR\_WRAPPER\_FILTER} & Custom wrapper filter file \\
+    \texttt{AFAR\_WRAPPER\_FILTER\_EXTRA} & Add local filter rules \\
+    \texttt{AFAR\_PKGCONFIG\_}\allowbreak\texttt{SHIM\_DIR} & Extra \texttt{.pc} shim path \\
+    \texttt{AFAR\_PKGCONFIG\_}\allowbreak\texttt{SHIM\_AUTO} & Auto-refresh shims toggle \\
+    \texttt{AFAR\_LLVM\_LIB\_DIR} & Override LLVM runtime fallback \\
+    \hline
+  \end{tabular}
+\end{table}
+
+\subsection{Wrapper Filtering and Link Type Guard}
+\label{sec:wrapper-filter}
+Wrapper filters ignore or replace arguments injected by build systems that are
+incompatible with AFAR. The filter is defined in a shared rule file and can be
+extended per site via \texttt{AFAR\_WRAPPER\_}\allowbreak\texttt{FILTER\_EXTRA}. The wrappers also
+guard against Cray's dynamic link mode by unsetting
+\texttt{CRAYPE\_LINK\_TYPE=dynamic}, preventing late-injected flags that
+conflict with the AFAR toolchain.
+
+\begin{table}[t]
+  \centering
+  \small
+  \setlength{\tabcolsep}{4pt}
+  \caption{Default wrapper filter rules used by Afar-prgenv.}
+  \label{tab:wrapper-filter}
+  \begin{tabular}{l p{0.6\columnwidth}}
+    \hline
+    Pattern & Rationale \\
+    \hline
+    \texttt{-dynamic} & Avoid PE-injected dynamic link flags that break AFAR. \\
+    \texttt{-ftree-vectorize} & Drop GCC-specific flag not supported by AFAR. \\
+    \texttt{-ffunction-sections} & Drop GCC-specific flag in PE build flags. \\
+    \texttt{-fdata-sections} & Drop GCC-specific flag in PE build flags. \\
+    \hline
+  \end{tabular}
+\end{table}
+
 \subsection{pkg-config Integration}
 \label{sec:pkgconfig}
 MPI and vendor libraries depend on consistent `pkg-config` metadata. The
@@ -51,6 +101,37 @@ When required ROCm 6 runtime libraries are missing, the AFAR ROCm module
 suppresses Cray MPICH GTL `pkg-config` variables to avoid injecting
 incompatible link flags. This keeps MPI builds functional while signaling that
 accelerator-enabled MPI paths need follow-up validation.
+
+\begin{figure*}[t]
+  \centering
+  \resizebox{\textwidth}{!}{\input{src/fig-pkgconfig-flow}}
+  \caption{pkg-config metadata flow under Afar-prgenv.}
+  \Description{Diagram showing PE metadata paths mirrored into PKG_CONFIG_PATH,
+  with AFAR shim directories appended by the wrappers.}
+  \label{fig:pkgconfig-flow}
+\end{figure*}
+
+Shims can be regenerated automatically when the module environment changes, so
+libraries can be loaded before or after
+\texttt{afar-}\allowbreak\texttt{prgenv} without breaking builds. The wrappers
+track environment changes and re-run shim generation when necessary, keeping
+\texttt{PKG\_}\allowbreak\texttt{CONFIG\_PATH} consistent for build systems.
+
+\subsection{MPICH Flavor Mapping}
+\label{sec:mpich-flavor}
+Cray MPICH 8.x uses \texttt{mpich3.4a2} and 9.x uses \texttt{mpich4.3.1}.
+Afar-prgenv generates per-flavor `mpichf90.pc` files and selects the correct
+flavor based on
+\texttt{CRAY\_MPICH\_VERSION}. The wrappers re-check this at compile time so MPI
+metadata remains correct even if users swap MPICH modules after loading AFAR.
+
+\subsection{LLVM Runtime Fallback}
+\label{sec:llvm-runtime}
+Some AFAR drops omit LLVM runtime libraries. Examples include
+\texttt{libpgmath.so} and \texttt{libflang.so}. The module logic detects the newest compatible
+\texttt{/opt/rocm-*/llvm/lib} and appends it as a fallback, unless a site
+overrides the path with \texttt{AFAR\_LLVM\_LIB\_DIR}. This preserves compiler
+functionality without modifying the upstream drop.
 
 \subsection{Generation and Configuration}
 \label{sec:generator}

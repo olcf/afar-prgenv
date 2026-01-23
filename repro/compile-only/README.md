@@ -6,3 +6,6 @@ Build:
 ```
 ./build.sh
 ```
+
+Output:
+- Compiles `program.f90` to an object file (no link step).

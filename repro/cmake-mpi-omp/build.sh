@@ -13,6 +13,9 @@ if [[ -d "${build_dir}" ]]; then
 fi
 mkdir -p "${build_dir}"
 
+root_dir="$(cd "$(dirname "$0")/../.." && pwd)"
+check_ldd="${root_dir}/scripts/check_ldd.sh"
+
 export AFAR_FTN_OFFLOAD_ARCH=
 export AFAR_CC_OFFLOAD_ARCH=
 export AFAR_CXX_OFFLOAD_ARCH=
@@ -24,3 +27,5 @@ cmake -S . -B "${build_dir}" \
   ${AFAR_TEST_CMAKE_ARGS:-}
 
 cmake --build "${build_dir}" -j "${AFAR_TEST_JOBS:-4}"
+
+"${check_ldd}" "${build_dir}/c_hello" "${build_dir}/f_hello"

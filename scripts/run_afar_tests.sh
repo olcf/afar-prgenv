@@ -13,11 +13,14 @@ CPU_TARGET_DEFAULT="${AFAR_TEST_CPU_TARGET:-craype-x86-trento}"
 GPU_TARGET_DEFAULT="${AFAR_TEST_GPU_TARGET:-craype-accel-amd-gfx90a}"
 
 LIBSCI_MODULE_DEFAULT="${AFAR_TEST_LIBSCI_MODULE:-cray-libsci}"
+LIBSCI_ACC_MODULE_DEFAULT="${AFAR_TEST_LIBSCI_ACC_MODULE:-cray-libsci_acc}"
+HDF5_SERIAL_MODULE_DEFAULT="${AFAR_TEST_HDF5_SERIAL_MODULE:-cray-hdf5}"
 HDF5_MODULE_DEFAULT="${AFAR_TEST_HDF5_MODULE:-cray-hdf5-parallel}"
 FFTW_MODULE_DEFAULT="${AFAR_TEST_FFTW_MODULE:-cray-fftw}"
 DSMML_MODULE_DEFAULT="${AFAR_TEST_DSMML_MODULE:-cray-dsmml}"
+PAR_NETCDF_MODULE_DEFAULT="${AFAR_TEST_PARALLEL_NETCDF_MODULE:-cray-parallel-netcdf}"
 
-PROFILES_DEFAULT="${AFAR_TEST_PROFILES:-base,libsci,hdf5,fftw,dsmml}"
+PROFILES_DEFAULT="${AFAR_TEST_PROFILES:-base,libsci,libsci-acc,hdf5,hdf5-serial,fftw,dsmml,netcdf}"
 
 usage() {
   cat <<EOF
@@ -44,6 +47,37 @@ CPE_MODULE="${CPE_DEFAULT}"
 PRGENV_MODULE="${PRGENV_DEFAULT}"
 MPICH_MODULE="${MPICH_DEFAULT}"
 KEEP_GOING="false"
+
+RESULTS=()
+
+record_result() {
+  local profile="$1"
+  local repro="$2"
+  local status="$3"
+  local reason="$4"
+  reason="${reason//$'
+'/ }"
+  RESULTS+=("${profile}	${repro}	${status}	${reason}")
+}
+
+print_summary() {
+  if [[ ${#RESULTS[@]} -eq 0 ]]; then
+    echo "No repro results recorded."
+    return 0
+  fi
+  echo ""
+  echo "=== Test Summary ==="
+  printf '%-14s %-22s %-7s %s
+' "Profile" "Repro" "Status" "Reason"
+  printf '%-14s %-22s %-7s %s
+' "-------" "-----" "------" "------"
+  local entry profile repro status reason
+  for entry in "${RESULTS[@]}"; do
+    IFS=$'	' read -r profile repro status reason <<< "${entry}"
+    printf '%-14s %-22s %-7s %s
+' "${profile}" "${repro}" "${status}" "${reason}"
+  done
+}
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -125,6 +159,17 @@ module_use_paths() {
   done
 }
 
+module_available() {
+  local name="$1"
+  local output=""
+  output="$(module -t avail "${name}" 2>/dev/null || true)"
+  if command -v rg >/dev/null 2>&1; then
+    rg -q "^${name}(/|$)" <<< "${output}"
+  else
+    echo "${output}" | grep -Eq "^${name}(/|$)"
+  fi
+}
+
 module_load_all() {
   local mods=("$@")
   if ! command -v module >/dev/null 2>&1; then
@@ -168,6 +213,25 @@ module_load_all() {
   module list
 }
 
+add_pkgconfig_shims() {
+  local shim_script="${ROOT_DIR}/afar_modules/scripts/generate_pkgconfig_shims.sh"
+  if [[ ! -x "${shim_script}" ]]; then
+    return 0
+  fi
+  local shim_dir
+  shim_dir="$(${shim_script})" || return 0
+  [[ -n "${shim_dir}" ]] || return 0
+  export AFAR_PKGCONFIG_SHIM_DIR="${shim_dir}"
+  case ":${PKG_CONFIG_PATH:-}:" in
+    *":${shim_dir}:"*) return 0 ;;
+  esac
+  if [[ -n "${PKG_CONFIG_PATH:-}" ]]; then
+    export PKG_CONFIG_PATH="${PKG_CONFIG_PATH}:${shim_dir}"
+  else
+    export PKG_CONFIG_PATH="${shim_dir}"
+  fi
+}
+
 run_repro() {
   local profile="$1"
   local repro_dir="$2"
@@ -176,14 +240,40 @@ run_repro() {
 
   if [[ ! -x "${repro_dir}/build.sh" ]]; then
     echo "SKIP: ${repro_name} (missing build.sh)" >&2
+    record_result "${profile}" "${repro_name}" "SKIP" "missing build.sh"
     return 0
   fi
 
   echo "==> ${repro_name}"
-  (cd "${repro_dir}" && \
-    AFAR_TEST_LABEL="${profile}" \
-    AFAR_TEST_OUT_DIR="${AFAR_TEST_OUT_DIR:-build}" \
-    ./build.sh)
+  local tmp_out
+  tmp_out="$(mktemp)"
+  local status="PASS"
+  local reason=""
+
+  if (cd "${repro_dir}" &&     AFAR_TEST_LABEL="${profile}"     AFAR_TEST_PROFILE="${profile}"     AFAR_TEST_OUT_DIR="${AFAR_TEST_OUT_DIR:-build}"     ./build.sh >"${tmp_out}" 2>&1); then
+    local skip_line=""
+    skip_line="$(grep -m1 '^SKIP:' "${tmp_out}" || true)"
+    if [[ -n "${skip_line}" ]]; then
+      status="SKIP"
+      reason="${skip_line#SKIP: }"
+    fi
+  else
+    status="FAIL"
+    reason="$(grep -m1 -E 'ld.lld:|error:|ERROR:|fatal:' "${tmp_out}" || true)"
+    if [[ -z "${reason}" ]]; then
+      reason="exit code $?"
+    fi
+  fi
+
+  cat "${tmp_out}"
+  rm -f "${tmp_out}"
+
+  record_result "${profile}" "${repro_name}" "${status}" "${reason}"
+
+  if [[ "${status}" == "FAIL" ]]; then
+    return 1
+  fi
+  return 0
 }
 
 run_profile() {
@@ -199,9 +289,19 @@ run_profile() {
         "${CPU_TARGET_DEFAULT}" "${GPU_TARGET_DEFAULT}" "${LIBSCI_MODULE_DEFAULT}" \
         "${AFAR_MODULE}")
       ;;
+    libsci-acc)
+      modules=("${CPE_MODULE}" "${PRGENV_MODULE}" "${MPICH_MODULE}" \
+        "${CPU_TARGET_DEFAULT}" "${GPU_TARGET_DEFAULT}" "${LIBSCI_ACC_MODULE_DEFAULT}" \
+        "${AFAR_MODULE}")
+      ;;
     hdf5)
       modules=("${CPE_MODULE}" "${PRGENV_MODULE}" "${MPICH_MODULE}" \
         "${CPU_TARGET_DEFAULT}" "${GPU_TARGET_DEFAULT}" "${HDF5_MODULE_DEFAULT}" \
+        "${AFAR_MODULE}")
+      ;;
+    hdf5-serial)
+      modules=("${CPE_MODULE}" "${PRGENV_MODULE}" "${MPICH_MODULE}" \
+        "${CPU_TARGET_DEFAULT}" "${GPU_TARGET_DEFAULT}" "${HDF5_SERIAL_MODULE_DEFAULT}" \
         "${AFAR_MODULE}")
       ;;
     fftw)
@@ -212,6 +312,11 @@ run_profile() {
     dsmml)
       modules=("${CPE_MODULE}" "${PRGENV_MODULE}" "${MPICH_MODULE}" \
         "${CPU_TARGET_DEFAULT}" "${GPU_TARGET_DEFAULT}" "${DSMML_MODULE_DEFAULT}" \
+        "${AFAR_MODULE}")
+      ;;
+    netcdf)
+      modules=("${CPE_MODULE}" "${PRGENV_MODULE}" "${MPICH_MODULE}" \
+        "${CPU_TARGET_DEFAULT}" "${GPU_TARGET_DEFAULT}" "${PAR_NETCDF_MODULE_DEFAULT}" \
         "${AFAR_MODULE}")
       ;;
     *)
@@ -231,7 +336,8 @@ run_profile() {
     echo "=== Modules: ${modules[*]}"
     if ! module_load_all "${modules[@]}"; then
       echo "SKIP: profile ${profile} (module load failure)"
-      return 0
+      record_result "${profile}" "(module-load)" "FAIL" "module load failure"
+      return 1
     fi
     local ftn_path=""
     local ftn_expected="${ROOT_DIR}/afar_modules/bin/ftn"
@@ -245,6 +351,19 @@ run_profile() {
       return 1
     fi
 
+    add_pkgconfig_shims
+
+    if [[ "${profile}" == "libsci-acc" ]]; then
+      local skip_reason="libsci-acc profile disabled (libsci_acc link not validated)."
+      echo "SKIP: ${skip_reason}"
+      local repro_dir
+      for repro_dir in "${ROOT_DIR}/repro/"*; do
+        [[ -d "${repro_dir}" ]] || continue
+        record_result "${profile}" "$(basename "${repro_dir}")" "SKIP" "${skip_reason}"
+      done
+      return 0
+    fi
+
     local repro_dir
     for repro_dir in "${ROOT_DIR}/repro/"*; do
       [[ -d "${repro_dir}" ]] || continue
@@ -255,7 +374,7 @@ run_profile() {
         fi
       fi
     done
-  } 2>&1 | tee "${log_file}"
+  } > >(tee "${log_file}") 2>&1
 }
 
 failures=0
@@ -271,7 +390,9 @@ done < <(split_csv "${PROFILES}")
 
 if [[ "${failures}" -gt 0 ]]; then
   echo "AFAR test run completed with ${failures} failure(s)." >&2
+  print_summary
   exit 1
 fi
 
 echo "AFAR test run completed successfully."
+print_summary

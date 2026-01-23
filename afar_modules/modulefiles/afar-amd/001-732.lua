@@ -153,6 +153,31 @@ if afar_offload_arch == "" and accel_target:match("^amd_gfx") then
   afar_offload_arch = accel_target:gsub("^amd_gfx", "gfx")
 end
 if accel_target ~= "" and accel_target ~= "host" then
+  local libsci_acc_prefix = os.getenv("CRAY_LIBSCI_ACC_PREFIX_DIR") or ""
+  local pkg_products = os.getenv("PE_PKGCONFIG_PRODUCTS") or ""
+  local pkg_libs = os.getenv("PE_PKGCONFIG_LIBS") or ""
+  local has_libsci_acc = libsci_acc_prefix ~= "" or pkg_products:find("PE_LIBSCI_ACC") or pkg_libs:find("libsci_acc")
+  if has_libsci_acc then
+  local libsci_acc_target = os.getenv("PE_LIBSCI_ACC_TARGET") or ""
+  if libsci_acc_target == "" and afar_offload_arch ~= "" then
+    setenv("PE_LIBSCI_ACC_TARGET", afar_offload_arch)
+  end
+  local libsci_acc_prgenv = os.getenv("PE_LIBSCI_ACC_PRGENV") or ""
+  if libsci_acc_prgenv == "" then
+    local pe_env = os.getenv("PE_ENV") or ""
+    if pe_env == "" then
+      pe_env = "amd"
+    else
+      pe_env = string.lower(pe_env)
+    end
+    setenv("PE_LIBSCI_ACC_PRGENV", pe_env)
+  end
+  local libsci_acc_pkg_vars = os.getenv("PE_LIBSCI_ACC_PKGCONFIG_VARIABLES") or ""
+  if libsci_acc_pkg_vars:find("@accelerator@") and accel_target:match("^amd_gfx") then
+    setenv("PE_LIBSCI_ACC_PKGCONFIG_VARIABLES", libsci_acc_pkg_vars:gsub("@accelerator@", accel_target))
+  end
+  end
+
   if mode() == "load" then
     local msg = "NOTE: clearing CRAY_ACCEL_TARGET/CRAY_ACCEL_VENDOR because CrayPE offload flags use -Xopenmp-target which AFAR flang does not accept."
     if afar_offload_arch ~= "" then
@@ -184,6 +209,14 @@ prepend_path("LD_LIBRARY_PATH", pathJoin(AFAR_PREFIX, "lib"))
 local wrapper_dir = pathJoin(mod_dir, "..", "..", "bin")
 if isDir(wrapper_dir) then
   prepend_path("PATH", wrapper_dir)
+end
+if mode() == "load" then
+  local filter_file = pathJoin(mod_dir, "..", "..", "config", "wrapper-filter.txt")
+  if isFile(filter_file) then
+    LmodMessage("AFAR wrapper filter file: " .. filter_file)
+  else
+    LmodMessage("AFAR wrapper filter file not found: " .. filter_file)
+  end
 end
 local craype_dir = os.getenv("CRAYPE_DIR") or ""
 if craype_dir ~= "" and isFile(pathJoin(craype_dir, "bin", "ftn")) then

@@ -5,7 +5,12 @@ label="${AFAR_TEST_LABEL:-default}"
 out_dir="${AFAR_TEST_OUT_DIR:-build}/${label}"
 mkdir -p "${out_dir}"
 
+root_dir="$(cd "$(dirname "$0")/../.." && pwd)"
+check_ldd="${root_dir}/scripts/check_ldd.sh"
+
 ftn hello.f90 -o "${out_dir}/mpi_hello"
+
+"${check_ldd}" "${out_dir}/mpi_hello"
 
 if [[ "${AFAR_TEST_RUN_MPI:-0}" == "1" ]]; then
   if command -v srun >/dev/null 2>&1; then

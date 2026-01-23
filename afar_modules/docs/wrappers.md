@@ -38,7 +38,7 @@ The wrappers re-check MPI state at invocation time and adjust pkg-config paths:
 This handles the case where `cray-mpich` is loaded or swapped after
 `afar-prgenv`.
 
-For a primer on `.pc` files and `PKG_CONFIG_PATH`, see `docs/pkgconfig.md`.
+For a primer on `.pc` files and `PKG_CONFIG_PATH`, see [docs/pkgconfig.md](pkgconfig.md).
 
 ## OpenMP Offload Arch Injection
 If the wrapper sees `-fopenmp` and there is no explicit `--offload-arch`, it
@@ -127,5 +127,5 @@ export AFAR_WRAPPER_DEBUG=1
 - Prefer `ftn`, `cc`, and `CC` wrappers for builds unless explicitly testing
   direct `amdflang` or `amdclang`.
 - Keep wrapper scripts executable (`chmod 755`).
-- If you add new wrapper logic, update `docs/wrappers.md` and
-  `docs/architecture.md` to keep behavior in sync.
+- If you add new wrapper logic, update [docs/wrappers.md](wrappers.md) and
+  [docs/architecture.md](architecture.md) to keep behavior in sync.

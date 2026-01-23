@@ -1,7 +1,7 @@
 # Troubleshooting
 
 This page lists common issues and quick diagnostics for the AFAR module tree.
-For background on `.pc` files and `pkg-config`, see `docs/pkgconfig.md`.
+For background on `.pc` files and `pkg-config`, see [docs/pkgconfig.md](pkgconfig.md).
 
 ## Quick Diagnostics
 ```

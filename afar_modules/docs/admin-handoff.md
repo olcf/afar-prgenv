@@ -44,7 +44,7 @@ module tree on Frontier.
 - The generator creates `mpichf90.pc` and `rocm-afar-<ver>.pc` files.
 - Local shim `.pc` files are generated at runtime by
   `scripts/generate_pkgconfig_shims.sh` using the module environment.
-- For background and manual maintenance guidance, see `docs/pkgconfig.md`.
+- For background and manual maintenance guidance, see [docs/pkgconfig.md](pkgconfig.md).
 
 ## Cray MPICH 8.x vs 9.x
 - Cray MPICH 8.x needs `include/mpich3.4a2` from the AFAR drop.
@@ -61,11 +61,11 @@ update the site documentation and consider setting `AFAR_LLVM_LIB_DIR`.
 - `config/cray-mpich-dir.txt`
 - `config/afar-versions.txt`
 - `.modules` (workspace guidance)
-- `docs/mpich.md` and `docs/troubleshooting.md` (examples and tests)
-- `docs/pkgconfig.md` (pkg-config baseline or shim behavior)
+- [docs/mpich.md](mpich.md) and [docs/troubleshooting.md](troubleshooting.md) (examples and tests)
+- [docs/pkgconfig.md](pkgconfig.md) (pkg-config baseline or shim behavior)
 
 ## Handoff Notes
 - Generated modulefiles live under `modulefiles/`. Avoid editing them directly.
 - Keep `scripts/generate_afar_modules.sh` as the authoritative source for
   modulefile behavior.
-- If you add new wrapper logic, update `docs/wrappers.md` and regenerate.
+- If you add new wrapper logic, update [docs/wrappers.md](wrappers.md) and regenerate.

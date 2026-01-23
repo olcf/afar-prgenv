@@ -65,7 +65,7 @@ Pkg-config shims (generated at runtime):
 - `pkgconfig/shims/<AFAR_VERSION>/*.pc`
 
 Shims are created by `afar_modules/scripts/generate_pkgconfig_shims.sh` based
-on loaded module environment variables. See `docs/pkgconfig.md` for details.
+on loaded module environment variables. See [docs/pkgconfig.md](pkgconfig.md) for details.
 
 ## Adding a New AFAR Drop
 1) Install the AFAR drop under `AFAR_ROOT`.
@@ -102,4 +102,4 @@ To override:
 - Update `config/afar-versions.txt` when new drops appear.
 - Update `config/cray-mpich-dir.txt` when Cray MPICH paths change.
 - Re-run the generator and validate with a small compile test.
-- Review `docs/pkgconfig.md` when adding or changing library modules.
+- Review [docs/pkgconfig.md](pkgconfig.md) when adding or changing library modules.

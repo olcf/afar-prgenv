@@ -3,7 +3,7 @@
 This document explains how AFAR modules support both Cray MPICH 8.x and 9.x,
 and how the correct MPI module files and pkg-config entries are selected.
 
-For background on `.pc` files and `pkg-config`, see `docs/pkgconfig.md`.
+For background on `.pc` files and `pkg-config`, see [docs/pkgconfig.md](pkgconfig.md).
 
 ## MPICH Flavor Mapping
 Cray MPICH versions map to different MPI module file layouts:

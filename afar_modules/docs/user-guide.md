@@ -85,7 +85,7 @@ Notes:
 ## pkg-config Basics
 Many build systems call `pkg-config` to discover include paths and link flags.
 AFAR relies on `.pc` files to keep MPI and Cray library metadata consistent with
-AFAR builds. For background and manual maintenance, see `docs/pkgconfig.md`.
+AFAR builds. For background and manual maintenance, see [docs/pkgconfig.md](pkgconfig.md).
 
 Quick checks:
 ```

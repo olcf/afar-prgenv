@@ -23,7 +23,7 @@ MPI and Cray PE libraries. The key idea is:
   `PKG_CONFIG_PATH` so build systems can find the right data even if modules
   are swapped after `afar-prgenv` loads.
 
-For background and manual maintenance, see `docs/pkgconfig.md`.
+For background and manual maintenance, see [docs/pkgconfig.md](pkgconfig.md).
 
 ## Load and Environment Flow
 1) User loads `PrgEnv-amd`, `cray-mpich`, and the `craype-*` target modules.

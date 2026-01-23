@@ -4,16 +4,16 @@ This plan keeps AFAR module docs maintainable as new drops, PE versions, and
 wrapper behavior evolve.
 
 ## Document Set (Recommended)
-- `../../README.md`: entry point and doc map.
-- `docs/user-guide.md`: user workflows and build examples.
-- `docs/pkgconfig.md`: `pkg-config` primer, `.pc` format, and shims.
-- `docs/architecture.md`: module load and runtime architecture.
-- `docs/module-generation.md`: generator inputs, outputs, and update steps.
-- `docs/wrappers.md`: wrapper behavior and environment overrides.
-- `docs/mpich.md`: MPICH 8.x vs 9.x behavior and validation.
-- `docs/troubleshooting.md`: diagnostics and example tests.
-- `docs/testing.md`: test harness and repro layout.
-- `docs/admin-handoff.md`: admin checklist for deployment and updates.
+- [../../README.md](../../README.md): entry point and doc map.
+- [docs/user-guide.md](user-guide.md): user workflows and build examples.
+- [docs/pkgconfig.md](pkgconfig.md): `pkg-config` primer, `.pc` format, and shims.
+- [docs/architecture.md](architecture.md): module load and runtime architecture.
+- [docs/module-generation.md](module-generation.md): generator inputs, outputs, and update steps.
+- [docs/wrappers.md](wrappers.md): wrapper behavior and environment overrides.
+- [docs/mpich.md](mpich.md): MPICH 8.x vs 9.x behavior and validation.
+- [docs/troubleshooting.md](troubleshooting.md): diagnostics and example tests.
+- [docs/testing.md](testing.md): test harness and repro layout.
+- [docs/admin-handoff.md](admin-handoff.md): admin checklist for deployment and updates.
 
 ## Update Triggers
 Update docs whenever:
@@ -39,11 +39,11 @@ Update docs whenever:
 1) Make code or module changes.
 2) Update the relevant doc(s) based on the change type.
 3) Run a quick sanity build to validate any example command snippets.
-4) Keep the doc map in `../../README.md` in sync with new files.
+4) Keep the doc map in [../../README.md](../../README.md) in sync with new files.
 
 ## Doc Review Checklist
 - Are example module versions updated?
-- Does `docs/mpich.md` match the current MPICH major mapping?
+- Does [docs/mpich.md](mpich.md) match the current MPICH major mapping?
 - Do wrappers docs match `bin/ftn`, `bin/cc`, `bin/CC` behavior?
 - Do troubleshooting steps mention the latest common failures?
-- Are pkg-config changes reflected in `docs/pkgconfig.md`?
+- Are pkg-config changes reflected in [docs/pkgconfig.md](pkgconfig.md)?

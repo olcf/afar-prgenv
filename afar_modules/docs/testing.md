@@ -103,7 +103,7 @@ You can generate them manually after loading modules:
 afar_modules/scripts/generate_pkgconfig_shims.sh
 ```
 
-For background on `.pc` files and `PKG_CONFIG_PATH`, see `docs/pkgconfig.md`.
+For background on `.pc` files and `PKG_CONFIG_PATH`, see [docs/pkgconfig.md](pkgconfig.md).
 
 The wrappers also refresh shims automatically when `AFAR_PKGCONFIG_SHIM_AUTO`
 is enabled; the runner still generates them once per profile to keep results
